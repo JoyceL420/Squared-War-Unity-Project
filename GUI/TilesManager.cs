@@ -10,13 +10,15 @@ public class TilesManager : MonoBehaviour
     private GameObject _tilePrefab;
     private Tile _tile;
 
-    private void Start()
+    private void Awake()
     {
-        _tilesList = new List<GameObject>();
-        _tilePrefab = GameObject.Find("TilePrefab");    }
+        _tilesList = new List<GameObject>(); 
+        _tilePrefab = GameObject.Find("TilePrefab");   
+    }
     public void GenerateGrid(int _width, int _height)
     { // This method creates tiles from the point 0, 0 until reaching the
     // Given width and height arguements when the method is called
+        
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
