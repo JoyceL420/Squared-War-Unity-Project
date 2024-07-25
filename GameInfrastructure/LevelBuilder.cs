@@ -8,6 +8,7 @@ public class LevelBuilder : MonoBehaviour
     // WILL BE ASSIGNED TO AN EMPTY OBJECT LATER
     private TeamController _teamsController; 
     private TilesManager _tilesManager;
+    private FootSoldierDragPlacer _unitPlacer;
     private int _mapWidth;
     private int _mapHeight;
 
@@ -25,11 +26,16 @@ public class LevelBuilder : MonoBehaviour
         _teamsController = TeamsController.GetComponent<TeamController>();
         GameObject TilesManager = GameObject.Find("Main Camera/Game Manager");
         _tilesManager = TilesManager.GetComponent<TilesManager>();
+        GameObject UnitPlacer = GameObject.Find("FootSoldierPlacer");
+        _unitPlacer = UnitPlacer.GetComponent<FootSoldierDragPlacer>();
 
         _obstaclePrefab = GameObject.Find("ObstaclePrefab");
+
         // DEBUG STUFF
         _mapWidth = 16;
         _mapHeight = 9;
+        _teamsController.LevelLoadInitialize((_mapWidth, _mapHeight));
+        _unitPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
         obstructedSquares.Add((4, 2));
         obstructedSquares.Add((5, 3));
         obstructedSquares.Add((4, 4));

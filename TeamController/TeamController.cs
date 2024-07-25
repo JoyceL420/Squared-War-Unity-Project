@@ -21,7 +21,6 @@ public class TeamController : MonoBehaviour
     public List <(float x, float y)> obstructedSquares;
     public List <(float x, float y)> occupiedSquares;
     private int _unitId;
-    private bool _continueLoop;
     private bool _blueUnitIsAlive;
     private bool _redUnitIsAlive;
     private List <int> _unitsToRemove;
@@ -29,7 +28,8 @@ public class TeamController : MonoBehaviour
     private GameObject OverlapChecker;
     private OverlapChecker _overlapChecker;
     private int _moveThreshold;
-    private TurnCaller _turnCaller;    
+    private TurnCaller _turnCaller;   
+    private (int xMapSize, int yMapSize) _mapSize;
     // Awake runs before Start
     void Awake()
     {
@@ -48,9 +48,14 @@ public class TeamController : MonoBehaviour
         OverlapChecker = GameObject.Find("OverlapAfterMoveChecker");
         _overlapChecker = OverlapChecker.GetComponent<OverlapChecker>();
         _moveThreshold = 0;
-        _continueLoop = false;
         _blueUnitIsAlive = true;
         _redUnitIsAlive = true;
+
+    }
+
+    public void LevelLoadInitialize((int, int) MapSize)
+    {
+        _mapSize = MapSize;
     }
     public void Turn(int team)
     {
@@ -160,7 +165,7 @@ public class TeamController : MonoBehaviour
             _blueFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0);
+            unit.Initialize(1, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize.xMapSize);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -168,7 +173,7 @@ public class TeamController : MonoBehaviour
             _redFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _redFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0);
+            unit.Initialize(1, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize.xMapSize);
         }
     }
     public void CloneCavalier(float xSpawnPoint, float ySpawnPoint, int team) // Foot soldier clone
@@ -181,7 +186,7 @@ public class TeamController : MonoBehaviour
             _blueCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1);
+            unit.Initialize(2, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1, _mapSize.xMapSize);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -189,7 +194,7 @@ public class TeamController : MonoBehaviour
             _redCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _redCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1);
+            unit.Initialize(2, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1, _mapSize.xMapSize);
         }
     }
     public void RemoveUnit(int unitId)
@@ -247,32 +252,36 @@ public class TeamController : MonoBehaviour
     }
     public bool CheckLoopStatus()
     {
+        if (_blueClones.Count == 0 || _redClones.Count == 0)
+        { // If for some reason either team has no units
+            return false; // End turn loop
+        }
         // Checks whether a team is still capable of fighting or not
         // If so the turn loop is flagged to continue
         // Otherwise it breaks and a winner for the battle will be declared
         _blueUnitIsAlive = false;
         _redUnitIsAlive = false;
-        _continueLoop = false;
         foreach (GameObject clone in _blueClones)
-        { // The logic below is going to need significant fixing
+        {
             unit unit = clone.GetComponent<unit>();
-            if (!unit.UnitIsDead() && !unit.cantMove)
+            if (unit.UnitIsDead() == false && unit.cantMove == false)
             { // IF a blue unit is alive, and capable of moving
-                _blueUnitIsAlive = true; // Set flag
+                _blueUnitIsAlive = true; // Set flag to continue loop
             }
         }
         foreach (GameObject clone in _redClones)
         {
             unit unit = clone.GetComponent<unit>();
-            if (!unit.UnitIsDead() && !unit.cantMove)
-            { // IF a blue unit is alive, and capable of moving
-                _redUnitIsAlive = true; // Set flag
+            if (unit.UnitIsDead() == false && unit.cantMove == false)
+            { // IF a red unit is alive, and capable of moving
+                _redUnitIsAlive = true; // Set flag to continue loop
             }
         }
-        if (!_blueUnitIsAlive || !_redUnitIsAlive)
+        if (_blueUnitIsAlive == false || _redUnitIsAlive == false)
         { // If either team has no usable units
-            return true; // End turn loop
+            return false; // End turn loop
         }
-        return false; // Default case
+        // Otherwise continue turn loop
+        return true; // Default case
     }
 }

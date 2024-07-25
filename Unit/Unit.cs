@@ -33,6 +33,7 @@ public class unit : MonoBehaviour
     private TeamController _teamController; 
     private FootMovement _footMovement;
     private CavalierMovement _cavalierMovement;
+    private int _mapWidth;
     private AttackTypes _attack;
     // private FootMovement _freeMovement;
     private string _movementType;
@@ -68,7 +69,7 @@ public class unit : MonoBehaviour
     {
         return _team;
     }
-    public void Initialize(int speed, int id, int team, List<int> movementPriority, (float x, float y) spawnPoint, List<(float, float)> obstructedSquares, string movementType, int unitType)
+    public void Initialize(int speed, int id, int team, List<int> movementPriority, (float x, float y) spawnPoint, List<(float, float)> obstructedSquares, string movementType, int unitType, int MapWidth)
     {
         _team = team;
         if (_team == 1)
@@ -107,6 +108,7 @@ public class unit : MonoBehaviour
                 _movementType = movementType;
                 break;
         }
+        _mapWidth = MapWidth;
     }
 
     public void MovementVariablesReset()
@@ -149,7 +151,10 @@ public class unit : MonoBehaviour
 
     public void TurnCall()
     {
-        Move();
+        if (!cantMove)
+        {
+            Move();
+        }
     }
 
     void Move() 
@@ -217,7 +222,11 @@ public class unit : MonoBehaviour
                 Debug.Log("ERROR: ATTEMPTED MOVEMEMENT OUTSIDE OF ACCEPTED RANGE UNIT:" + _unitId);
                 break;
         }
-        
+        UpdatePosition(); // Redundant
+        if ((_team == 0 && xPos == _mapWidth - 1) || (_team == 1 && xPos == 0))
+        { // If on blue team and on the right end of the map or on red team and on the left side of the map
+            cantMove = true; // Set cant move flag
+        }
     }
 
     public void Kill() 
