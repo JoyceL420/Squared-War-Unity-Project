@@ -73,7 +73,7 @@ public class FootSoldierDragPlacer : MonoBehaviour
         else if (CheckObstruction())
         {
             _teamsController.occupiedSquares.Add((roundedXPos, roundedYPos));
-            SummonUnit(roundedXPos, roundedYPos);  
+            SummonUnit(roundedXPos, roundedYPos); 
         }
     }
     private bool CheckObstruction()
@@ -97,7 +97,7 @@ public class FootSoldierDragPlacer : MonoBehaviour
     }
     void SummonUnit(float xSpawnPoint, float ySpawnPoint)
     {
-        _teamsController.CloneCavalier(xSpawnPoint, ySpawnPoint, _team);
+        _teamsController.CloneFootSoldier(xSpawnPoint, ySpawnPoint, _team);
     }
 
     Vector2 GetMousePos()

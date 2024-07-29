@@ -8,6 +8,7 @@ public class TurnCaller : MonoBehaviour
     private GameObject TeamController;
     TeamController _teamController;
     private bool _preparationStatus;
+    private bool _cachedReset;
     private bool _turnOngoing;
     private bool _turnLoopReiterate;
     private bool _allowReload;
@@ -40,14 +41,18 @@ public class TurnCaller : MonoBehaviour
         { 
             StartCoroutine(TurnLoop()); // This might cause massive issues! :) end me!
         }
-        if (Input.GetKeyDown(KeyCode.R) && _turnOngoing is false)
-        { // This will need updates to prevent issues from reloading mid-loop
-        // Update this method to "cache" the reset
-        // The reset will properly be run on the finishing of a turn
-            _preparationStatus  = true;
-            _currentTurn = 0;
-            _teamController.ResetPostions();
+        if (Input.GetKeyDown(KeyCode.R))
+        { 
+            _cachedReset = true;
         }
+    }
+
+    public void Reset()
+    {
+        _cachedReset = false;
+        _preparationStatus  = true;
+        _currentTurn = 0;
+        _teamController.ResetPostions();
     }
     public bool PreparationStatus()
     {
@@ -86,9 +91,11 @@ public class TurnCaller : MonoBehaviour
             }
             // Delay before reiteration
             yield return new WaitForSeconds(1.0f);
-
-            _turnLoopReiterate = _teamController.CheckLoopStatus();
+            
+            // Determine if reiteration should happen
+            _turnLoopReiterate = _teamController.CheckLoopStatus(_cachedReset);
         }
         Debug.Log("Loop ended");
+        Reset();
     }
 }

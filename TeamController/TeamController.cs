@@ -77,7 +77,7 @@ public class TeamController : MonoBehaviour
             unit unit = clone.GetComponent<unit>();
             unit.MovementVariablesReset(); // Reset direction variables
         }
-        Debug.Log("Turn finished");
+        // Debug.Log("Turn finished");
         _turnCaller.FinishTurn();
     }
     private void TurnPrep(int team)
@@ -250,8 +250,12 @@ public class TeamController : MonoBehaviour
                 break;
         }
     }
-    public bool CheckLoopStatus()
+    public bool CheckLoopStatus(bool _shouldReset)
     {
+        if (_shouldReset)
+        { // If a reset has been called/cached
+            return false; // End turn loop
+        }
         if (_blueClones.Count == 0 || _redClones.Count == 0)
         { // If for some reason either team has no units
             return false; // End turn loop

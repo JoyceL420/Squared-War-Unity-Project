@@ -50,7 +50,6 @@ public class LevelBuilder : MonoBehaviour
             PlaceObstacle(coordinate.x, coordinate.y);
             _teamsController.obstructedSquares.Add((coordinate.x, coordinate.y));
         }
-
     }
     void EstablishBoundary()
     { // This method spawns the grids and sets an obstructedSquares boundary

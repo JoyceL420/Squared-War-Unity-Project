@@ -23,7 +23,6 @@ public class FootMovement : MonoBehaviour
         _squareToMoveTo = (0, 0);
         Movement(movementPriority, obstructedSquares, xPos, yPos);
     }
-
     private void Movement(List<int> movementPriority, List<(float x, float y)> obstructedSquares, float xPos, float yPos)
     {
         foreach (int direction in movementPriority)
