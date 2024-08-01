@@ -25,7 +25,7 @@ public class unit : MonoBehaviour
     public (float x, float y) attackedTile;
     [SerializeField] private int _unitId;
     private List <int> _movementPriority;
-    private List <(float x, float y)> _obstructedSquares;
+    private List <Vector2Int> _obstructedSquares;
     public (float x, float y) _spawnPoint;
     public bool cantMove;
     private Collider2D _collider;
@@ -69,7 +69,7 @@ public class unit : MonoBehaviour
     {
         return _team;
     }
-    public void Initialize(int speed, int id, int team, List<int> movementPriority, (float x, float y) spawnPoint, List<(float, float)> obstructedSquares, string movementType, int unitType, int MapWidth)
+    public void Initialize(int speed, int id, int team, List<int> movementPriority, (float x, float y) spawnPoint, List<Vector2Int> obstructedSquares, string movementType, int unitType, int MapWidth)
     {
         _team = team;
         if (_team == 1)

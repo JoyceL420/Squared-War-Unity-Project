@@ -11,13 +11,12 @@ public class LevelBuilder : MonoBehaviour
     private FootSoldierDragPlacer _unitPlacer;
     private int _mapWidth;
     private int _mapHeight;
-
     private GameObject _obstaclePrefab;
-    private List <(float x, float y)> obstructedSquares;
+    private List <Vector2Int> obstructedSquares;
     // Start is called before the first frame update
     void Start()
     {
-        obstructedSquares = new List<(float x, float y)>();
+        obstructedSquares = new List<Vector2Int>();
         // This Script gets the data from LevelSpecifications based on what level was chosen
         // And places the units and battle elements and tells them their starting positions
         
@@ -36,19 +35,19 @@ public class LevelBuilder : MonoBehaviour
         _mapHeight = 9;
         _teamsController.LevelLoadInitialize((_mapWidth, _mapHeight));
         _unitPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
-        obstructedSquares.Add((4, 2));
-        obstructedSquares.Add((5, 3));
-        obstructedSquares.Add((4, 4));
+        obstructedSquares.Add(new Vector2Int(4, 2));
+        obstructedSquares.Add(new Vector2Int(5, 3));
+        obstructedSquares.Add(new Vector2Int(4, 4));
         EstablishBoundary();
     }
 
     void PlaceObstructions()
     {
         // Obstacle placement
-        foreach (var coordinate in obstructedSquares)
+        foreach (Vector2Int coordinate in obstructedSquares)
         {
             PlaceObstacle(coordinate.x, coordinate.y);
-            _teamsController.obstructedSquares.Add((coordinate.x, coordinate.y));
+            _teamsController.obstructedSquares.Add(new Vector2Int (coordinate.x, coordinate.y));
         }
     }
     void EstablishBoundary()
@@ -62,13 +61,13 @@ public class LevelBuilder : MonoBehaviour
         // Adds additional obstructed tiles surrounding the grid
         for (int x = -1; x <= _mapWidth; x++)
         {
-            obstructedSquares.Add((x, -1)); // bottom
-            obstructedSquares.Add((x, _mapHeight)); // top
+            obstructedSquares.Add(new Vector2Int (x, -1)); // bottom
+            obstructedSquares.Add(new Vector2Int (x, _mapHeight)); // top
         }
         for (int y = 0; y < _mapHeight; y++)
         {
-            obstructedSquares.Add((-1, y)); // left
-            obstructedSquares.Add((_mapWidth, y)); // right
+            obstructedSquares.Add(new Vector2Int (-1, y)); // left
+            obstructedSquares.Add(new Vector2Int (_mapWidth, y)); // right
         }
         // Now spawn obstructions
         PlaceObstructions();

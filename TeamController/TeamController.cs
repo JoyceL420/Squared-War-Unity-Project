@@ -18,12 +18,11 @@ public class TeamController : MonoBehaviour
     private List<GameObject> _clones = new List<GameObject>();
     private List<GameObject> _unitsToMove = new List<GameObject>();
     public List<(float x, float y, int id, int team)> affectedSquares;
-    public List <(float x, float y)> obstructedSquares;
+    public List <Vector2Int> obstructedSquares;
     public List <(float x, float y)> occupiedSquares;
     private int _unitId;
     private bool _blueUnitIsAlive;
     private bool _redUnitIsAlive;
-    private List <int> _unitsToRemove;
     private GameObject TurnCaller;
     private GameObject OverlapChecker;
     private OverlapChecker _overlapChecker;
@@ -33,7 +32,7 @@ public class TeamController : MonoBehaviour
     // Awake runs before Start
     void Awake()
     {
-        obstructedSquares = new List<(float x, float y)>();
+        obstructedSquares = new List <Vector2Int>();
     }
     // Start is called before the first frame update
     void Start()
@@ -41,7 +40,6 @@ public class TeamController : MonoBehaviour
         _unitId = 1;
         affectedSquares = new List<(float x, float y, int id, int team)>();
         occupiedSquares = new List<(float x, float y)>();
-        _unitsToRemove = new List<int>();
         _unitPrefab = GameObject.Find("UnitPrefab");
         TurnCaller = GameObject.Find("Main Camera/Game Manager");
         _turnCaller = TurnCaller.GetComponent<TurnCaller>();

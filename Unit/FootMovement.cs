@@ -17,13 +17,13 @@ public class FootMovement : MonoBehaviour
         _squareToMoveTo = (0, 0);
     }
 
-    public void Move(List<int> movementPriority, List<(float x, float y)> obstructedSquares, float xPos, float yPos)
+    public void Move(List<int> movementPriority, List<Vector2Int> obstructedSquares, float xPos, float yPos)
     {
         // Resets variables necessary for checks
         _squareToMoveTo = (0, 0);
         Movement(movementPriority, obstructedSquares, xPos, yPos);
     }
-    private void Movement(List<int> movementPriority, List<(float x, float y)> obstructedSquares, float xPos, float yPos)
+    private void Movement(List<int> movementPriority, List<Vector2Int> obstructedSquares, float xPos, float yPos)
     {
         foreach (int direction in movementPriority)
         { // Iterate direction

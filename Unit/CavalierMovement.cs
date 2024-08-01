@@ -18,7 +18,7 @@ public class CavalierMovement : MonoBehaviour
         _squareToMoveTo = (0, 0);
     }
 
-    public void Move(List<int> movementPriority, List<(float x, float y)> obstructedSquares, float xPos, float yPos, int _directionMoved)
+    public void Move(List<int> movementPriority, List<Vector2Int> obstructedSquares, float xPos, float yPos, int _directionMoved)
     {   
         // Resets variables necessary for checks
         _squareToMoveTo = (0, 0);
@@ -26,7 +26,7 @@ public class CavalierMovement : MonoBehaviour
     }
 
 
-    public void Movement(List<int> movementPriority, List<(float x, float y)> obstructedSquares, float xPos, float yPos, int _directionMoved)
+    public void Movement(List<int> movementPriority, List<Vector2Int> obstructedSquares, float xPos, float yPos, int _directionMoved)
     {
         foreach (int direction in movementPriority)
         { // Iterate direction
