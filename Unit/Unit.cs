@@ -24,13 +24,14 @@ public class unit : MonoBehaviour
     private int _unitType;
     public (float x, float y) attackedTile;
     [SerializeField] private int _unitId;
-    private List <int> _movementPriority;
-    private List <Vector2Int> _obstructedSquares;
+    private List <int> _movementSequence;
+    private List <Vector2Int> _obstacles;
     public (float x, float y) _spawnPoint;
     public bool cantMove;
     private Collider2D _collider;
     private GameObject TeamController;
     private TeamController _teamController; 
+    private Pathfinding _pathfinder;
     private FootMovement _footMovement;
     private CavalierMovement _cavalierMovement;
     private int _mapWidth;
@@ -69,7 +70,7 @@ public class unit : MonoBehaviour
     {
         return _team;
     }
-    public void Initialize(int speed, int id, int team, List<int> movementPriority, (float x, float y) spawnPoint, List<Vector2Int> obstructedSquares, string movementType, int unitType, int MapWidth)
+    public void Initialize(int speed, int id, int team, List<int> movementPriority, (float x, float y) spawnPoint, List<Vector2Int> obstructedSquares, string movementType, int unitType, Vector2Int mapSize)
     {
         _team = team;
         if (_team == 1)
@@ -82,11 +83,12 @@ public class unit : MonoBehaviour
         }
         _speed = speed;
         _unitId = id;
-        _movementPriority = movementPriority;
+        _movementSequence = movementPriority;
         _spawnPoint = (spawnPoint.x, spawnPoint.y);
-        _obstructedSquares = obstructedSquares;
+        _obstacles = obstructedSquares;
         TeamController = GameObject.Find("TeamsController");
         _teamController = TeamController.GetComponent<TeamController>();
+        _pathfinder = GetComponent<Pathfinding>();
         _attack = GetComponent<AttackTypes>();
         _unitType = unitType;
         switch (movementType.FirstCharacterToUpper())
@@ -108,7 +110,8 @@ public class unit : MonoBehaviour
                 _movementType = movementType;
                 break;
         }
-        _mapWidth = MapWidth;
+        // Finds the path
+        _movementSequence = _pathfinder.FindPath(CurrentPosition(), mapSize, _obstacles);
     }
 
     public void MovementVariablesReset()
@@ -157,18 +160,31 @@ public class unit : MonoBehaviour
         }
     }
 
+    private Vector2Int CurrentPosition()
+    {
+        return new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+    }
+    private int GetDirection()
+    {
+        _timesMoved += 1;
+        if (_movementSequence.Count < _timesMoved)
+        {
+            return _movementSequence[_timesMoved - 1];
+        }
+        return 0;
+    }
     void Move() 
     {
         // Debug.Log("Move was called");
         switch (_movementType)
         {
             case "Foot":
-                _footMovement.Move(_movementPriority, _obstructedSquares, xPos, yPos);
+                _footMovement.Move(GetDirection());
                 UpdatePosition();
                 _attack.FootSoldierAttack((xPos, yPos));
                 break;
             case "Cavalier":
-                _cavalierMovement.Move(_movementPriority, _obstructedSquares, xPos, yPos, _directionMoved);
+                // _cavalierMovement.Move(GetDirection());
                 UpdatePosition();
                 _attack.FootSoldierAttack((xPos, yPos));
                 break;

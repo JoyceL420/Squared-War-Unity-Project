@@ -28,7 +28,7 @@ public class TeamController : MonoBehaviour
     private OverlapChecker _overlapChecker;
     private int _moveThreshold;
     private TurnCaller _turnCaller;   
-    private (int xMapSize, int yMapSize) _mapSize;
+    private Vector2Int _mapSize;
     // Awake runs before Start
     void Awake()
     {
@@ -51,9 +51,9 @@ public class TeamController : MonoBehaviour
 
     }
 
-    public void LevelLoadInitialize((int, int) MapSize)
+    public void LevelLoadInitialize((int x, int y) MapSize)
     {
-        _mapSize = MapSize;
+        _mapSize = new Vector2Int(MapSize.x, MapSize.y);
     }
     public void Turn(int team)
     {
@@ -163,7 +163,7 @@ public class TeamController : MonoBehaviour
             _blueFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize.xMapSize);
+            unit.Initialize(1, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -171,7 +171,7 @@ public class TeamController : MonoBehaviour
             _redFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _redFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize.xMapSize);
+            unit.Initialize(1, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize);
         }
     }
     public void CloneCavalier(float xSpawnPoint, float ySpawnPoint, int team) // Foot soldier clone
@@ -184,7 +184,7 @@ public class TeamController : MonoBehaviour
             _blueCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1, _mapSize.xMapSize);
+            unit.Initialize(2, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 1, _mapSize);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -192,7 +192,7 @@ public class TeamController : MonoBehaviour
             _redCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _redCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1, _mapSize.xMapSize);
+            unit.Initialize(2, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 1, _mapSize);
         }
     }
     public void RemoveUnit(int unitId)

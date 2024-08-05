@@ -5,7 +5,7 @@ using Unity.Collections;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class P : MonoBehaviour
+public class Pathfinding : MonoBehaviour
 {
     public int GridHeight; // Limit for width
     public int GridWidth; // Limit for height
@@ -15,12 +15,16 @@ public class P : MonoBehaviour
 
     private List<Node> openList; // List of tiles that have yet to be evaulated
     private HashSet<Node> closedList; // List of evaulated tiles
+
+    private int targetX;
+    private int minY;
+    private int maxY;
     private Node[,] nodes;
 
-    public List<int> FindPath(Vector2Int start, int targetX, int minY, int maxY, List<Vector2Int> obstacles)
+    public List<int> FindPath(Vector2Int start, Vector2Int mapSize, List<Vector2Int> obstacles)
     {
         // Sets limit for grid + non-walkable spaces
-        InitializeGrid(obstacles);
+        InitializeGridAndVariables(obstacles, mapSize);
 
         // Setting of start and goal/end nodes
         Node startNode = nodes[start.x, start.y];
@@ -70,13 +74,21 @@ public class P : MonoBehaviour
         return null;
     }
 
-    private void InitializeGrid(List<Vector2Int> obstacles)
+    private void InitializeGridAndVariables(List<Vector2Int> obstacles, Vector2Int mapSize)
     {
+        // Initialize variables
+        targetX = mapSize.x;
+        minY = 0;
+        maxY = mapSize.y;
+        GridWidth = mapSize.x + 1;
+        GridHeight = mapSize.y + 1;
+
         // Initialize nodes (size of map)
+
         nodes = new Node[GridWidth, GridHeight];
-        for (int x = 0; x < GridWidth; x++)
+        for (int x = -1; x < GridWidth; x++)
         {
-            for (int y = 0; y < GridHeight; y++)
+            for (int y = -1; y < GridHeight; y++)
             { // Set node positions
                 nodes[x, y] = new Node(new Vector2Int(x, y));
             }
@@ -85,7 +97,15 @@ public class P : MonoBehaviour
         foreach (var obstacle in obstacles)
         { // Node that shares the position of an obstructed square
             // Set IsWalkable to false
-            nodes[obstacle.x, obstacle.y].IsWalkable = false;
+            // Debug.Log($"Processing obstacle at ({obstacle.x}, {obstacle.y})");
+            if (obstacle.x >= 0 && obstacle.x < GridWidth && obstacle.y >= 0 && obstacle.y < GridHeight)
+            {
+                nodes[obstacle.x, obstacle.y].IsWalkable = false;
+            }
+            else
+            {
+                Debug.LogError($"Obstacle position ({obstacle.x}, {obstacle.y}) is out of bounds. GridWidth: {GridWidth}, GridHeight: {GridHeight}");
+            }
         }
     }
 
