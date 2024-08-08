@@ -17,9 +17,9 @@ public class TeamController : MonoBehaviour
     private List<GameObject> _redCavaliers = new List<GameObject>();
     private List<GameObject> _clones = new List<GameObject>();
     private List<GameObject> _unitsToMove = new List<GameObject>();
-    public List<(float x, float y, int id, int team)> affectedSquares;
+    public List<(Vector2Int coordinate, int id, int team)> affectedSquares;
     public List <Vector2Int> obstructedSquares;
-    public List <(float x, float y)> occupiedSquares;
+    public List <Vector2Int> occupiedSquares;
     private int _unitId;
     private bool _blueUnitIsAlive;
     private bool _redUnitIsAlive;
@@ -38,8 +38,8 @@ public class TeamController : MonoBehaviour
     void Start()
     {
         _unitId = 1;
-        affectedSquares = new List<(float x, float y, int id, int team)>();
-        occupiedSquares = new List<(float x, float y)>();
+        affectedSquares = new List<(Vector2Int coordinate, int id, int team)>();
+        occupiedSquares = new List<Vector2Int>();
         _unitPrefab = GameObject.Find("UnitPrefab");
         TurnCaller = GameObject.Find("Main Camera/Game Manager");
         _turnCaller = TurnCaller.GetComponent<TurnCaller>();
@@ -204,7 +204,7 @@ public class TeamController : MonoBehaviour
             // If the unit selectedto remove has the same id as the specified id AND the battle isnt ongoing.
             if (unit.GetId() == unitId && _turnCaller.PreparationStatus())
             { // Remove that unit from the game
-                occupiedSquares.Remove((unit.xPos, unit.yPos));
+                occupiedSquares.Remove(new Vector2Int (unit.UnitPosition.x, unit.UnitPosition.y));
                 _blueClones.Remove(clone);
                 _clones.Remove(clone);
                 ResetIds(unit.GetUnitType(), clone);

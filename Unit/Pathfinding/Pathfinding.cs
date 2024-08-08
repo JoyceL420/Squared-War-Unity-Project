@@ -30,6 +30,12 @@ public class Pathfinding : MonoBehaviour
         Node startNode = nodes[start.x, start.y];
         List<Node> goalNodes = GetGoalNodes(targetX, minY, maxY);
 
+        // DEBUG
+        // foreach (var goalNode in goalNodes)
+        // {
+            // Debug.Log($"Goal Node Position: {goalNode.Position}");
+        // }
+
         openList = new List<Node> { startNode };
         closedList = new HashSet<Node>();
 
@@ -39,13 +45,16 @@ public class Pathfinding : MonoBehaviour
             Node currentNode = GetLowestFCostNode(openList);
             openList.Remove(currentNode);
             closedList.Add(currentNode);
-
+            Debug.Log($"Current Node Position: {currentNode.Position}");
             // If the node selected is in goal nodes
             if (goalNodes.Contains(currentNode))
             {
                 // Trace the path and end loop (returns to whatever movement script called this bungaloo)
+                Debug.Log("Pathfound");
+                Debug.Log(currentNode.Position);
                 return RetracePath(startNode, currentNode);
             }
+            // Debug.Log("Pathfind"); check for if pathfinding is even happening at all.
 
             // Otherwise get the neighbors of the current node
             foreach (Node neighbor in GetNeighbors(currentNode))
@@ -54,6 +63,7 @@ public class Pathfinding : MonoBehaviour
                 if (!neighbor.IsWalkable || closedList.Contains(neighbor))
                 {
                     // Reiterate
+                    // Debug.Log("Reiterate due to non-walkable");
                     continue;
                 }
                 int newGCost = currentNode.gCost + GetDistance(currentNode, neighbor);
@@ -78,17 +88,21 @@ public class Pathfinding : MonoBehaviour
     {
         // Initialize variables
         targetX = mapSize.x;
-        minY = 0;
+        // Debug.Log(mapSize.x);
+        minY = 1;
         maxY = mapSize.y;
-        GridWidth = mapSize.x + 1;
-        GridHeight = mapSize.y + 1;
+        // Debug.Log(mapSize.y);
+        GridWidth = mapSize.x + 2;
+        // Debug.Log(GridWidth);
+        GridHeight = mapSize.y + 2;
+        // Debug.Log(GridHeight);
 
         // Initialize nodes (size of map)
 
         nodes = new Node[GridWidth, GridHeight];
-        for (int x = -1; x < GridWidth; x++)
+        for (int x = 0; x < GridWidth; x++)
         {
-            for (int y = -1; y < GridHeight; y++)
+            for (int y = 0; y < GridHeight; y++)
             { // Set node positions
                 nodes[x, y] = new Node(new Vector2Int(x, y));
             }
@@ -168,7 +182,7 @@ public class Pathfinding : MonoBehaviour
 
     private bool IsWithinGrid(Vector2Int position)
     { // Make sure that the space referenced is actually in the grid in the first place
-        return position.x >= 0 && position.x < GridWidth && position.y >= 0 && position.y < GridHeight;
+        return position.x >= 0 && position.x < GridWidth + 1 && position.y >= 0 && position.y < GridHeight + 1;
     }
 
     private int GetDistance(Node a, Node b)
@@ -202,6 +216,13 @@ public class Pathfinding : MonoBehaviour
             path.Add(GetDirectionFromVector(direction));
         }
         path.Reverse();
+        Debug.Log("path returned");
+        Debug.Log(path.Count);
+        foreach (int direction in path)
+        {
+            // Debug.Log(direction);
+            // Debug.Log("AAAA");
+        }
         return path;
     }
 
@@ -211,7 +232,7 @@ public class Pathfinding : MonoBehaviour
         if (direction == new Vector2Int(1, 1)) return 2; // Up-right
         if (direction == new Vector2Int(1, 0)) return 3; // Right
         if (direction == new Vector2Int(1, -1)) return 4; // Down-right
-        if (direction == new Vector2Int(0, 1)) return 5; // Down
+        if (direction == new Vector2Int(0, -1)) return 5; // Down
         if (direction == new Vector2Int(-1, -1)) return 6; // Down-left
         if (direction == new Vector2Int(-1, 0)) return 7; // Left
         if (direction == new Vector2Int(-1, 1)) return 8; // Up-left

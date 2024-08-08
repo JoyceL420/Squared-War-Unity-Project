@@ -8,9 +8,9 @@ public class FootSoldierDragPlacer : MonoBehaviour
     [SerializeField] private GameObject cameraPosition;
     private bool dragging;
     private Vector3 mousePos;
-    private Vector2 mousePos2D;
-    private float roundedXPos;
-    private float roundedYPos;
+    private Vector2Int mousePos2D;
+    private int roundedXPos;
+    private int roundedYPos;
     private TeamController _teamsController;
     private (int mapWidth, int mapHeight) _mapSize;
     public List<(float x, float y)> occupiedSquares;
@@ -61,18 +61,18 @@ public class FootSoldierDragPlacer : MonoBehaviour
     {
         dragging = false;
         // Check position and place unit in accordance to whichever grid tile is highlighted
-        roundedXPos = Mathf.Round(transform.position.x);
-        roundedYPos = Mathf.Round(transform.position.y);
+        roundedXPos = Mathf.RoundToInt(transform.position.x);
+        roundedYPos = Mathf.RoundToInt(transform.position.y);
         // If there are no units that have been spawned yet (this system should probably be redone)
         if (_teamsController.occupiedSquares.Count == 0)
         {
-            _teamsController.occupiedSquares.Add((roundedXPos, roundedYPos));
+            _teamsController.occupiedSquares.Add(new Vector2Int (roundedXPos, roundedYPos));
             SummonUnit(roundedXPos, roundedYPos);
         }
         // Check if that square has already been used to place a unit or the spawn point is outside the allowed boundary
         else if (CheckObstruction())
         {
-            _teamsController.occupiedSquares.Add((roundedXPos, roundedYPos));
+            _teamsController.occupiedSquares.Add(new Vector2Int(roundedXPos, roundedYPos));
             SummonUnit(roundedXPos, roundedYPos); 
         }
     }

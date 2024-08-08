@@ -16,4 +16,21 @@ public class Node : MonoBehaviour
         this.Position = position;
         IsWalkable = true;
     }
+
+    // Override equals check to ensure nodes are compared by position
+    public override bool Equals(object obj)
+    {
+        if (obj == null || !(obj is Node))
+        {
+            return false;
+        }
+
+        Node other = (Node) obj;
+        return this.Position.Equals(other.Position);
+    }
+    // Objects that are 'equal' have the same hash code
+    public override int GetHashCode()
+    {
+        return Position.GetHashCode();
+    }
 }

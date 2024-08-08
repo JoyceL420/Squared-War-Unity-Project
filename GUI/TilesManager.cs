@@ -23,9 +23,9 @@ public class TilesManager : MonoBehaviour
         {
             for (int y = 0; y < _height; y++)
             {
-                GameObject spawnedTile = Instantiate(_tilePrefab, new Vector2(x, y),Quaternion.identity);
+                GameObject spawnedTile = Instantiate(_tilePrefab, new Vector2(x + 1, y + 1),Quaternion.identity);
                 _tilesList.Add(spawnedTile); // Add tiles to list for eventual removal
-                spawnedTile.name = $"Tile ({x}, {y})";
+                spawnedTile.name = $"Tile ({x + 1}, {y + 1})";
             }
         }
     }

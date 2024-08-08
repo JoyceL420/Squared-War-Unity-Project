@@ -15,8 +15,7 @@ public class unit : MonoBehaviour
     // Creation of variables
     public bool isDead;
     [SerializeField] private int _team; // 0 = Blue/you, 1 = Red
-    [SerializeField] public float xPos;
-    [SerializeField] public float yPos;
+    public Vector2Int UnitPosition;
     //private string unitType;
     [SerializeField] private int _speed;
     public int _timesMoved;
@@ -181,12 +180,12 @@ public class unit : MonoBehaviour
             case "Foot":
                 _footMovement.Move(GetDirection());
                 UpdatePosition();
-                _attack.FootSoldierAttack((xPos, yPos));
+                _attack.FootSoldierAttack(UnitPosition);
                 break;
             case "Cavalier":
                 // _cavalierMovement.Move(GetDirection());
                 UpdatePosition();
-                _attack.FootSoldierAttack((xPos, yPos));
+                _attack.FootSoldierAttack(UnitPosition);
                 break;
             case "Free":
                 UpdatePosition();
@@ -239,7 +238,7 @@ public class unit : MonoBehaviour
                 break;
         }
         UpdatePosition(); // Redundant
-        if ((_team == 0 && xPos == _mapWidth - 1) || (_team == 1 && xPos == 0))
+        if ((_team == 0 && UnitPosition.x == _mapWidth - 1) || (_team == 1 && UnitPosition.x == 0))
         { // If on blue team and on the right end of the map or on red team and on the left side of the map
             cantMove = true; // Set cant move flag
         }
@@ -266,8 +265,7 @@ public class unit : MonoBehaviour
 
     private void UpdatePosition() 
     { // Just updates the xPos and yPos variables for ease of use
-        xPos = transform.position.x;
-        yPos = transform.position.y;
+        UnitPosition = new Vector2Int (Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
     }
     private void CheckMouse2Overlap()
     {

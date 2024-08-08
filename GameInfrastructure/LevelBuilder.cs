@@ -59,15 +59,15 @@ public class LevelBuilder : MonoBehaviour
         _tilesManager.GenerateGrid(_mapWidth, _mapHeight);
 
         // Adds additional obstructed tiles surrounding the grid
-        for (int x = -1; x <= _mapWidth; x++)
+        for (int x = 0; x <= _mapWidth + 1; x++)
         {
-            obstructedSquares.Add(new Vector2Int (x, -1)); // bottom
-            obstructedSquares.Add(new Vector2Int (x, _mapHeight)); // top
+            obstructedSquares.Add(new Vector2Int (x, 0)); // bottom
+            obstructedSquares.Add(new Vector2Int (x, _mapHeight + 1)); // top
         }
-        for (int y = 0; y < _mapHeight; y++)
+        for (int y = 1; y < _mapHeight + 1; y++)
         {
-            obstructedSquares.Add(new Vector2Int (-1, y)); // left
-            obstructedSquares.Add(new Vector2Int (_mapWidth, y)); // right
+            obstructedSquares.Add(new Vector2Int (0, y)); // left
+            obstructedSquares.Add(new Vector2Int (_mapWidth + 1, y)); // right
         }
         // Now spawn obstructions
         PlaceObstructions();

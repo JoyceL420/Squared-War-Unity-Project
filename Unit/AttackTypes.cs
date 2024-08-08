@@ -17,10 +17,10 @@ public class AttackTypes : MonoBehaviour
         TeamController = GameObject.Find("TeamsController");
         _teamController = TeamController.GetComponent<TeamController>();
     }
-    public void FootSoldierAttack((float x, float y) coordinate)
+    public void FootSoldierAttack(Vector2Int coordinate)
     { // Foot soldier attacks means that the unit attacks the tiles
         // that it stands on.
         // This may apply to units that isn't a foot soldier e.g. cavalier
-        _teamController.affectedSquares.Add((coordinate.x, coordinate.y, _unit.GetId(), _unit.GetTeam()));
+        _teamController.affectedSquares.Add((coordinate, _unit.GetId(), _unit.GetTeam()));
     }
 }
