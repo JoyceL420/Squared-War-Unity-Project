@@ -15,6 +15,7 @@ public class Pathfinding : MonoBehaviour
 
     private List<Node> openList; // List of tiles that have yet to be evaulated
     private HashSet<Node> closedList; // List of evaulated tiles
+    private List<int> path;
 
     private int targetX;
     private int minY;
@@ -45,14 +46,16 @@ public class Pathfinding : MonoBehaviour
             Node currentNode = GetLowestFCostNode(openList);
             openList.Remove(currentNode);
             closedList.Add(currentNode);
-            Debug.Log($"Current Node Position: {currentNode.Position}");
+            // Debug.Log($"Current Node Position: {currentNode.Position}");
             // If the node selected is in goal nodes
             if (goalNodes.Contains(currentNode))
             {
                 // Trace the path and end loop (returns to whatever movement script called this bungaloo)
                 Debug.Log("Pathfound");
                 Debug.Log(currentNode.Position);
-                return RetracePath(startNode, currentNode);
+                Debug.Log(startNode.Position);
+                StartCoroutine(RetracePath(startNode, currentNode));
+                return path;
             }
             // Debug.Log("Pathfind"); check for if pathfinding is even happening at all.
 
@@ -63,16 +66,18 @@ public class Pathfinding : MonoBehaviour
                 if (!neighbor.IsWalkable || closedList.Contains(neighbor))
                 {
                     // Reiterate
-                    // Debug.Log("Reiterate due to non-walkable");
+                    // Debug.Log("Reiterate due to non-walkable/eliminated");
                     continue;
                 }
                 int newGCost = currentNode.gCost + GetDistance(currentNode, neighbor);
+                // Find/set the cheapest movement option to goal
                 if (newGCost < neighbor.gCost || !openList.Contains(neighbor))
                 {
-                    neighbor.gCost = newGCost;
-                    neighbor.hCost = GetDistanceFromTarget(neighbor, targetX, minY, maxY);
-                    neighbor.parent = currentNode;
 
+                    Debug.Log($"Setting parent of {neighbor.Position} to {currentNode.Position}");
+                    neighbor.gCost = newGCost;
+                    neighbor.hCost = GetDistanceFromTarget(neighbor, targetX, minY, maxY);                    
+                    neighbor.parent = currentNode;
                     if (!openList.Contains(neighbor))
                     {
                         openList.Add(neighbor);
@@ -96,8 +101,9 @@ public class Pathfinding : MonoBehaviour
         // Debug.Log(GridWidth);
         GridHeight = mapSize.y + 2;
         // Debug.Log(GridHeight);
-
+        List<int> path = new List <int>();
         // Initialize nodes (size of map)
+        
 
         nodes = new Node[GridWidth, GridHeight];
         for (int x = 0; x < GridWidth; x++)
@@ -199,43 +205,52 @@ public class Pathfinding : MonoBehaviour
         return distanceX + distanceY;
     }
 
-    private List<int> RetracePath(Node startNode, Node endNode)
+    IEnumerator RetracePath(Node startNode, Node endNode)
     { // Make the final path
-        List<int> path = new List <int>();
         Node currentNode = endNode;
 
-        while (currentNode != startNode)
+        while (currentNode.Position != startNode.Position)
         {
             Node parentNode = currentNode.parent; // Parent node of current node
-            if (parentNode == null) // If there is none
+            Debug.Log($"Evaluating {currentNode.Position} against {parentNode.Position}");
+            if (parentNode.Position == currentNode.Position) // If there is none
             {
+                Debug.Log("No parent found");
                 break; // That's literally the end of the path no more work needed :P
             }
             // Otherwise go backwards and get the direction from parentNode to the child node until there is no more ndoes left
+            Debug.Log("A");
             Vector2Int direction = currentNode.Position - parentNode.Position;
+            Debug.Log("B");
             path.Add(GetDirectionFromVector(direction));
+            Debug.Log("B");
         }
+        Debug.Log("Loop broken");
         path.Reverse();
         Debug.Log("path returned");
         Debug.Log(path.Count);
-        foreach (int direction in path)
-        {
-            // Debug.Log(direction);
-            // Debug.Log("AAAA");
-        }
-        return path;
+        yield return null;
     }
 
     private int GetDirectionFromVector(Vector2Int direction)
     {
+        Debug.Log("C");
         if (direction == new Vector2Int(0, 1)) return 1; // Up
+        Debug.Log("C");
         if (direction == new Vector2Int(1, 1)) return 2; // Up-right
+        Debug.Log("C");
         if (direction == new Vector2Int(1, 0)) return 3; // Right
+        Debug.Log("C");
         if (direction == new Vector2Int(1, -1)) return 4; // Down-right
+        Debug.Log("C");
         if (direction == new Vector2Int(0, -1)) return 5; // Down
+        Debug.Log("C");
         if (direction == new Vector2Int(-1, -1)) return 6; // Down-left
+        Debug.Log("C");
         if (direction == new Vector2Int(-1, 0)) return 7; // Left
+        Debug.Log("C");
         if (direction == new Vector2Int(-1, 1)) return 8; // Up-left
+        Debug.Log("C");
         return 0; // Null
     }
 
