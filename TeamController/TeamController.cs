@@ -266,7 +266,7 @@ public class TeamController : MonoBehaviour
         foreach (GameObject clone in _blueClones)
         {
             unit unit = clone.GetComponent<unit>();
-            if (unit.UnitIsDead() == false && unit.cantMove == false)
+            if (unit.UnitIsDead() == false && unit._cantMove == false)
             { // IF a blue unit is alive, and capable of moving
                 _blueUnitIsAlive = true; // Set flag to continue loop
             }
@@ -274,7 +274,7 @@ public class TeamController : MonoBehaviour
         foreach (GameObject clone in _redClones)
         {
             unit unit = clone.GetComponent<unit>();
-            if (unit.UnitIsDead() == false && unit.cantMove == false)
+            if (unit.UnitIsDead() == false && unit._cantMove == false)
             { // IF a red unit is alive, and capable of moving
                 _redUnitIsAlive = true; // Set flag to continue loop
             }

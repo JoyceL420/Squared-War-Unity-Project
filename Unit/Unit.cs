@@ -20,7 +20,7 @@ public class unit : MonoBehaviour
     private List <int> _path;
     private List <Vector2Int> _obstacles;
     public (float x, float y) _spawnPoint;
-    public bool cantMove;
+    public bool _cantMove;
     private Collider2D _collider;
     private GameObject TeamController;
     private TeamController _teamController; 
@@ -40,7 +40,7 @@ public class unit : MonoBehaviour
     void Start()
     { // Runs before first frame
         isDead = false;
-        cantMove = false;
+        _cantMove = false;
         passedSquares = new List<(float x, float y)>();
         attackedTile = (0, 0);
         _collider = GetComponent<Collider2D>();
@@ -161,7 +161,7 @@ public class unit : MonoBehaviour
 
     public void TurnCall()
     {
-        if (!cantMove)
+        if (!_cantMove)
         {
             Move();
         }
@@ -174,8 +174,9 @@ public class unit : MonoBehaviour
     private int GetDirection()
     {
         Debug.Log($"Index: {_timesMoved -1}");
-        if (_timesMoved - 1 == _path.Count)
+        if (_path.Count == _timesMoved)
         {
+            _cantMove = true;
             return _path[_timesMoved - 1];
         }
         return _path[_timesMoved - 1];
@@ -261,7 +262,7 @@ public class unit : MonoBehaviour
         UpdatePosition(); // Redundant
         if ((_team == 0 && UnitPosition.x == _mapWidth - 1) || (_team == 1 && UnitPosition.x == 0))
         { // If on blue team and on the right end of the map or on red team and on the left side of the map
-            cantMove = true; // Set cant move flag
+            _cantMove = true; // Set cant move flag
         }
     }
 
@@ -277,7 +278,7 @@ public class unit : MonoBehaviour
     public void Reset()
     {
         isDead = false;
-        cantMove = false;
+        _cantMove = false;
         _timesMoved = 0;
         transform.position = new Vector2(_spawnPoint.x, _spawnPoint.y);
         MovementVariablesReset();
