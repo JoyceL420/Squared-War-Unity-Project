@@ -7,15 +7,13 @@ using UnityEngine;
 
 public class Pathfinding : MonoBehaviour
 {
-    public int GridHeight; // Limit for width
-    public int GridWidth; // Limit for height
+    public int GridHeight; // Limit for width (for grid initialization)
+    public int GridWidth; // Limit for height (for grid initialization)
     public Vector2Int StartPoint; // (Unit's spawn point)
-    public int EndPointX; // End goal (X axis as )
-    public bool DiagonalIsAllowed; // Allow diagonal movement flag
-
+    public int EndPointX; // End goal (X axis)
+    private bool DiagonalIsAllowed; // Allow diagonal movement flag
     private List<Node> openList; // List of tiles that have yet to be evaulated
     private HashSet<Node> closedList; // List of evaulated tiles
-    private List<int> path;
 
     private int targetX;
     private int minY;
@@ -26,16 +24,10 @@ public class Pathfinding : MonoBehaviour
     {
         // Sets limit for grid + non-walkable spaces
         InitializeGridAndVariables(obstacles, mapSize);
-
+        
         // Setting of start and goal/end nodes
         Node startNode = nodes[start.x, start.y];
         List<Node> goalNodes = GetGoalNodes(targetX, minY, maxY);
-
-        // DEBUG
-        // foreach (var goalNode in goalNodes)
-        // {
-            // Debug.Log($"Goal Node Position: {goalNode.Position}");
-        // }
 
         openList = new List<Node> { startNode };
         closedList = new HashSet<Node>();
@@ -51,17 +43,17 @@ public class Pathfinding : MonoBehaviour
             if (goalNodes.Contains(currentNode))
             {
                 // Trace the path and end loop (returns to whatever movement script called this bungaloo)
-                Debug.Log("Pathfound");
-                Debug.Log(currentNode.Position);
-                Debug.Log(startNode.Position);
-                StartCoroutine(RetracePath(startNode, currentNode));
-                return path;
+                // Debug.Log("Pathfound");
+                // Debug.Log(currentNode.Position);
+                // Debug.Log(startNode.Position);
+                return RetracePath(startNode, currentNode);
             }
             // Debug.Log("Pathfind"); check for if pathfinding is even happening at all.
 
             // Otherwise get the neighbors of the current node
             foreach (Node neighbor in GetNeighbors(currentNode))
             {
+
                 // If the neighbor has already been evaluated or is an obstacle
                 if (!neighbor.IsWalkable || closedList.Contains(neighbor))
                 {
@@ -73,11 +65,19 @@ public class Pathfinding : MonoBehaviour
                 // Find/set the cheapest movement option to goal
                 if (newGCost < neighbor.gCost || !openList.Contains(neighbor))
                 {
-
-                    Debug.Log($"Setting parent of {neighbor.Position} to {currentNode.Position}");
                     neighbor.gCost = newGCost;
                     neighbor.hCost = GetDistanceFromTarget(neighbor, targetX, minY, maxY);                    
                     neighbor.parent = currentNode;
+
+                    if (neighbor.parent == null)
+                    {
+                        Debug.LogError("Parent is null immediately after assignment.");
+                    }
+                    else
+                    {
+                        // Debug.Log($"Assigned parent: {neighbor.parent.Position} to child: {neighbor.Position}");
+                    }
+
                     if (!openList.Contains(neighbor))
                     {
                         openList.Add(neighbor);
@@ -101,16 +101,21 @@ public class Pathfinding : MonoBehaviour
         // Debug.Log(GridWidth);
         GridHeight = mapSize.y + 2;
         // Debug.Log(GridHeight);
-        List<int> path = new List <int>();
+
         // Initialize nodes (size of map)
-        
 
         nodes = new Node[GridWidth, GridHeight];
         for (int x = 0; x < GridWidth; x++)
         {
             for (int y = 0; y < GridHeight; y++)
-            { // Set node positions
-                nodes[x, y] = new Node(new Vector2Int(x, y));
+            {
+                nodes[x, y] = new Node(new Vector2Int(x, y))
+                {
+                    parent = null,
+                    gCost = int.MaxValue,
+                    hCost = 0,
+                    IsWalkable = true
+                };
             }
         }
         // Set obstructed tiles with the not walkable flag
@@ -205,52 +210,69 @@ public class Pathfinding : MonoBehaviour
         return distanceX + distanceY;
     }
 
-    IEnumerator RetracePath(Node startNode, Node endNode)
+    private List<int> RetracePath(Node startNode, Node endNode)
     { // Make the final path
+        List<int> path = new List <int>();
         Node currentNode = endNode;
+        int loopCounter = 0;
+        int maxIterations = 1000;
 
         while (currentNode.Position != startNode.Position)
         {
             Node parentNode = currentNode.parent; // Parent node of current node
-            Debug.Log($"Evaluating {currentNode.Position} against {parentNode.Position}");
-            if (parentNode.Position == currentNode.Position) // If there is none
+            // Debug.Log($"Evaluating {currentNode.Position} against {parentNode.Position}");
+
+            // Error cases
+            if (++loopCounter > maxIterations)
+            { // Potential infinite loop
+                Debug.LogError("Path retracing failed: Maximum iterations reached. Potential infinite loop");
+                break;
+            }
+            
+            if (currentNode.parent == null)
+            { // Parent is null (pathfinding failed)
+                Debug.LogError("Path retracing failed: A node with a null parent was encountered.");
+                break; // Prevent infinite loop
+            }
+
+            // End case
+            if (parentNode.Position == currentNode.Position)
             {
                 Debug.Log("No parent found");
                 break; // That's literally the end of the path no more work needed :P
             }
+
             // Otherwise go backwards and get the direction from parentNode to the child node until there is no more ndoes left
-            Debug.Log("A");
             Vector2Int direction = currentNode.Position - parentNode.Position;
-            Debug.Log("B");
             path.Add(GetDirectionFromVector(direction));
-            Debug.Log("B");
+            if (parentNode.Position == currentNode.Position)
+            {
+                Debug.LogError("Infinite loop detected: parent and current node positions are identical.");
+                break;
+            }
+            currentNode = parentNode;
         }
-        Debug.Log("Loop broken");
+        // Debug.Log("Loop broken");
         path.Reverse();
-        Debug.Log("path returned");
-        Debug.Log(path.Count);
-        yield return null;
+        // Debug.Log("path returned");
+        // Debug.Log($"The length of the path/amount of movements is {path.Count}");
+        foreach (int direction in path)
+        {
+            // Debug.Log(direction);
+        }
+        return path;
     }
 
     private int GetDirectionFromVector(Vector2Int direction)
     {
-        Debug.Log("C");
         if (direction == new Vector2Int(0, 1)) return 1; // Up
-        Debug.Log("C");
         if (direction == new Vector2Int(1, 1)) return 2; // Up-right
-        Debug.Log("C");
         if (direction == new Vector2Int(1, 0)) return 3; // Right
-        Debug.Log("C");
         if (direction == new Vector2Int(1, -1)) return 4; // Down-right
-        Debug.Log("C");
         if (direction == new Vector2Int(0, -1)) return 5; // Down
-        Debug.Log("C");
         if (direction == new Vector2Int(-1, -1)) return 6; // Down-left
-        Debug.Log("C");
         if (direction == new Vector2Int(-1, 0)) return 7; // Left
-        Debug.Log("C");
         if (direction == new Vector2Int(-1, 1)) return 8; // Up-left
-        Debug.Log("C");
         return 0; // Null
     }
 

@@ -75,7 +75,7 @@ public class TeamController : MonoBehaviour
             unit unit = clone.GetComponent<unit>();
             unit.MovementVariablesReset(); // Reset direction variables
         }
-        // Debug.Log("Turn finished");
+        Debug.Log("Turn finished");
         _turnCaller.FinishTurn();
     }
     private void TurnPrep(int team)
@@ -121,7 +121,7 @@ public class TeamController : MonoBehaviour
             unit unit = clone.GetComponent<unit>();
             unit.AddTimesMoved();
             unit.TurnCall(); // TurnCall method in unit script
-            if (unit._timesMoved >= _moveThreshold)
+            if (unit.GetTimesMovedInTurn() >= _moveThreshold)
             {
                 _unitsToMove.Remove(clone); // Remove unit from list if it has moved enough
             }
@@ -163,7 +163,7 @@ public class TeamController : MonoBehaviour
             _blueFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -171,10 +171,10 @@ public class TeamController : MonoBehaviour
             _redFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _redFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize);
         }
     }
-    public void CloneCavalier(float xSpawnPoint, float ySpawnPoint, int team) // Foot soldier clone
+    public void CloneCavalier(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
     { // Clone and initialization of the cavalier as called by the player or LevelBuilder
         GameObject clone = Instantiate(_unitPrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
         unit unit = clone.GetComponent<unit>();
@@ -184,7 +184,7 @@ public class TeamController : MonoBehaviour
             _blueCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, new List<int> {3, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 1, _mapSize);
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1, _mapSize);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -192,7 +192,7 @@ public class TeamController : MonoBehaviour
             _redCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _redCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, new List<int> {7, 1, 5, 0}, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 1, _mapSize);
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1, _mapSize);
         }
     }
     public void RemoveUnit(int unitId)

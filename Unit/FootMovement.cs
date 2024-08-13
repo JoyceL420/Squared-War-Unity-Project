@@ -5,16 +5,13 @@ using UnityEngine;
 
 public class FootMovement : MonoBehaviour
 {
-    private ObstructionChecker _obstructionChecker;
     private unit _unit;
-    private (float x, float y) _squareToMoveTo;
-    private bool _hasMoved;
     private void Start()
     {
         _unit = GetComponent<unit>();
     }
     public void Move(int direction)
-    {
+    { // Allows movement for given direction
         _unit.MoveTile(direction);
     }
 }
