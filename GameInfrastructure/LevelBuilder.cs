@@ -38,6 +38,10 @@ public class LevelBuilder : MonoBehaviour
         obstructedSquares.Add(new Vector2Int(4, 2));
         obstructedSquares.Add(new Vector2Int(5, 3));
         obstructedSquares.Add(new Vector2Int(4, 4));
+        obstructedSquares.Add(new Vector2Int(4, 5));
+        obstructedSquares.Add(new Vector2Int(4, 6));
+        obstructedSquares.Add(new Vector2Int(4, 7));
+        obstructedSquares.Add(new Vector2Int(4, 8));
         EstablishBoundary();
     }
 
