@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -66,7 +67,7 @@ public class Pathfinding : MonoBehaviour
                 if (newGCost < neighbor.gCost || !openList.Contains(neighbor))
                 {
                     neighbor.gCost = newGCost;
-                    neighbor.hCost = GetDistanceFromTarget(neighbor, targetX, minY, maxY);                    
+                    neighbor.hCost = GetDistanceFromTargets(neighbor, targetX, minY, maxY);                    
                     neighbor.parent = currentNode;
 
                     if (neighbor.parent == null)
@@ -203,10 +204,11 @@ public class Pathfinding : MonoBehaviour
         return distanceX + distanceY;
     }
 
-    private int GetDistanceFromTarget(Node node, int targetX, int minY, int maxY)
+    private int GetDistanceFromTargets(Node node, int targetX, int minY, int maxY)
     { // Get the distance to target node(s)
+        int closestY = Mathf.Clamp(node.Position.y, minY, maxY);
         int distanceX = Mathf.Abs(node.Position.x - targetX);
-        int distanceY = Mathf.Min(Mathf.Abs(node.Position.y - minY), Mathf.Abs(node.Position.y - maxY));
+        int distanceY = Mathf.Min(Mathf.Abs(node.Position.y - closestY), Mathf.Abs(node.Position.y - maxY));
         return distanceX + distanceY;
     }
 

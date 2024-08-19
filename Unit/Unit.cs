@@ -14,7 +14,7 @@ public class unit : MonoBehaviour
     public int _timesMoved;
     private int _timesMovedInTurn;
     public List<(float x, float y)> passedSquares;
-    private int _unitType;
+    private string _unitType;
     public (float x, float y) attackedTile;
     [SerializeField] private int _unitId;
     private List <int> _path;
@@ -26,12 +26,10 @@ public class unit : MonoBehaviour
     private TeamController _teamController; 
     private Pathfinding _pathfinder;
     private FootMovement _footMovement;
-    private CavalierMovement _cavalierMovement;
     private int _mapWidth;
     private Vector2Int _mapSize;
     private AttackTypes _attack;
     // private FootMovement _freeMovement;
-    private string _movementType;
     private int _directionPreviouslyMoved;
     private bool _diagonalMovementAllowed;
     [SerializeField] private Color _blue; // Update to sprite when graphics implemented
@@ -47,8 +45,9 @@ public class unit : MonoBehaviour
         _timesMoved = 0;
         _directionPreviouslyMoved = 0;
         UpdatePosition();
+        _footMovement = GetComponent<FootMovement>();
     }
-    public int GetUnitType()
+    public string GetUnitType()
     {
         return _unitType;
     }
@@ -64,7 +63,7 @@ public class unit : MonoBehaviour
     {
         return _team;
     }
-    public void Initialize(int speed, int id, int team, (float x, float y) spawnPoint, List<Vector2Int> obstructedSquares, string movementType, int unitType, Vector2Int mapSize)
+    public void Initialize(int speed, int id, int team, (float x, float y) spawnPoint, List<Vector2Int> obstructedSquares, string unitType, Vector2Int mapSize)
     {
         _team = team;
         if (_team == 1)
@@ -83,27 +82,22 @@ public class unit : MonoBehaviour
         _teamController = TeamController.GetComponent<TeamController>();
         _pathfinder = GetComponent<Pathfinding>();
         _attack = GetComponent<AttackTypes>();
-        _unitType = unitType;
         _mapSize = mapSize;
-        switch (movementType.FirstCharacterToUpper())
+        _unitType = unitType;
+        switch (unitType.FirstCharacterToUpper())
         {
-            case "Cavalier":
-                _cavalierMovement = GetComponent<CavalierMovement>();
-                // Debug.Log(movementType);
-                _movementType = movementType;
+            case "Archer":
                 _diagonalMovementAllowed = false;
                 break;
             case "Free":
-                // _freeMovement = GetComponent<FootMovement>();
-                // Debug.Log(movementType);
-                _movementType = movementType;
+                // Able to move diagonally
+                
                 _diagonalMovementAllowed = true;
                 break;
             default:
-                movementType = "Foot";
-                _footMovement = GetComponent<FootMovement>();
-                // Debug.Log(movementType);
-                _movementType = movementType;
+                // Foot soldier
+                _unitType = "Foot";
+                _unitType = unitType;
                 _diagonalMovementAllowed = false;
                 break;
         }
@@ -117,11 +111,6 @@ public class unit : MonoBehaviour
         // Debug.Log("Reset");
         _directionPreviouslyMoved = 0; // Inactive/no direction
         _timesMovedInTurn = 0; // Hasn't moved in a turn
-        if (_movementType == "Cavalier")
-        {
-            _path = _pathfinder.FindPath(CurrentPosition(), _mapSize, _obstacles);
-
-        }
     }
     public bool UnitIsDead()
     {
@@ -183,35 +172,24 @@ public class unit : MonoBehaviour
     }
     void Move() 
     {
-        Debug.Log($"Move was called with type {_movementType}");
+        Debug.Log($"Move was called with type {_unitType}");
         _timesMovedInTurn += 1; // Attempt to move being called
-        switch (_movementType)
+        switch (_unitType)
         { // Determines how a unit will move or attack
             case "Foot":
                 _footMovement.Move(GetDirection());
                 UpdatePosition();
                 _attack.FootSoldierAttack(UnitPosition);
                 break;
-            case "FootDiagonal":
-            // Foot soldier movement but with allowed diagonal movement
-                // _footMovement.Move(GetDirection());
-                // UpdatePosition();
-                // _attack.FootSoldierAttack(UnitPosition);
-                break;
-            case "Warper":
-            // Moves twice instantly (diagonal movements allowed)
-                // _footMovement.Move(GetDirection());
-                // UpdatePosition();
-                // _attack.FootSoldierAttack(UnitPosition);
-                break;
             case "Cavalier":
-            // Can only move in one direction during a turn (if blocked mid-turn prevent additional movement)
-                _cavalierMovement.Move(GetDirection());
+                _footMovement.Move(GetDirection());
                 UpdatePosition();
                 _attack.FootSoldierAttack(UnitPosition);
                 break;
             case "Free":
+                _footMovement.Move(GetDirection());
                 UpdatePosition();
+                _attack.FootSoldierAttack(UnitPosition);
                 break; 
             default:
                 Debug.LogError("ERROR: _movementType variable OUTSIDE ACCEPTED RANGE");

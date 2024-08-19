@@ -163,7 +163,7 @@ public class TeamController : MonoBehaviour
             _blueFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", _mapSize);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -171,7 +171,7 @@ public class TeamController : MonoBehaviour
             _redFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _redFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", 0, _mapSize);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", _mapSize);
         }
     }
     public void CloneCavalier(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
@@ -184,7 +184,7 @@ public class TeamController : MonoBehaviour
             _blueCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1, _mapSize);
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -192,7 +192,7 @@ public class TeamController : MonoBehaviour
             _redCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _redCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", 1, _mapSize);
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize);
         }
     }
     public void RemoveUnit(int unitId)
@@ -217,12 +217,12 @@ public class TeamController : MonoBehaviour
         // Empties every single list and removes all units
         // (Will be used when changing level)
     }
-    private void ResetIds(int _unitType, GameObject unitToRemove)
+    private void ResetIds(string _unitType, GameObject unitToRemove)
     { // Only needs to be used EVER for the blue team :P
         Debug.Log("Reset Ids called");
         switch (_unitType)
         {
-            case 0:
+            case "Foot":
                 // Foot soldiers
                 _blueFootSoldiers.Remove(unitToRemove);
                 _unitId = 0;
@@ -233,7 +233,7 @@ public class TeamController : MonoBehaviour
                     unit?.SetId(100+_unitId);
                 }
                 break;
-            case 1:
+            case "Cavalier":
                 // Cavaliers
                 _blueCavaliers.Remove(unitToRemove);
                 _unitId = 0;
