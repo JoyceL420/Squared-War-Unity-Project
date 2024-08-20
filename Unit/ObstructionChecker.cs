@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ObstructionChecker : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // IS OBSOLETE
     public bool CheckObstruction(List<Vector2Int> _obstructedSquares, (float x, float y) _squareToMoveTo)
     {
         foreach (Vector2Int coordinate in _obstructedSquares)

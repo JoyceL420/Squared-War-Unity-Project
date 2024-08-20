@@ -23,4 +23,16 @@ public class AttackTypes : MonoBehaviour
         // This may apply to units that isn't a foot soldier e.g. cavalier
         _teamController.affectedSquares.Add((coordinate, _unit.GetId(), _unit.GetTeam()));
     }
+    public void ArcherAttack(Vector2Int coordinate, int direction)
+    { 
+        // Attack a space ahead dependent on move direction
+        _teamController.affectedSquares.Add((coordinate, _unit.GetId(), _unit.GetTeam()));
+    }
+    public void MageAttack(Vector2Int coordinate, int direction)
+    { 
+        // Attack sides dependent on move direction
+
+        //TODO
+        _teamController.affectedSquares.Add((coordinate, _unit.GetId(), _unit.GetTeam()));
+    }
 }

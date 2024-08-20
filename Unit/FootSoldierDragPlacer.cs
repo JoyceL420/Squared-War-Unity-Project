@@ -63,21 +63,17 @@ public class FootSoldierDragPlacer : MonoBehaviour
         // Check position and place unit in accordance to whichever grid tile is highlighted
         roundedXPos = Mathf.RoundToInt(transform.position.x);
         roundedYPos = Mathf.RoundToInt(transform.position.y);
-        // If there are no units that have been spawned yet (this system should probably be redone)
-        if (_teamsController.occupiedSquares.Count == 0)
+        // 
+        if (CheckObstruction())
         {
             _teamsController.occupiedSquares.Add(new Vector2Int (roundedXPos, roundedYPos));
             SummonUnit(roundedXPos, roundedYPos);
         }
-        // Check if that square has already been used to place a unit or the spawn point is outside the allowed boundary
-        else if (CheckObstruction())
-        {
-            _teamsController.occupiedSquares.Add(new Vector2Int(roundedXPos, roundedYPos));
-            SummonUnit(roundedXPos, roundedYPos); 
-        }
     }
     private bool CheckObstruction()
     {
+        Debug.Log($"Attempting to spawn at ({roundedXPos}, {roundedYPos}) with limit ({_mapSize.mapWidth}, {_mapSize.mapHeight})");
+        // Checks if the square is occupied by a unit, and is within the allowed range
         foreach (var coordinate in _teamsController.occupiedSquares)
         { // If the location where a unit is trying to be spawned in has been occupied
             if (coordinate.x == roundedXPos && coordinate.y == roundedYPos)
@@ -86,8 +82,16 @@ public class FootSoldierDragPlacer : MonoBehaviour
                 return false;
             }
         } 
+        foreach (var coordinate in _teamsController.obstructedSquares)
+        {
+            if (coordinate.x == roundedXPos && coordinate.y == roundedYPos)
+            { // Prevent the spawn
+                Debug.Log("Spawn has been prevented");
+                return false;
+            }
+        }
         // Check for whether the spawn is taking place outside the boundaries
-        if (roundedXPos > _mapSize.mapWidth -1 || roundedXPos < 0 || roundedYPos > _mapSize.mapHeight - 1 || roundedYPos < 0)
+        if (roundedXPos > _mapSize.mapWidth || roundedXPos <= 0 || roundedYPos > _mapSize.mapHeight || roundedYPos <= 0)
         {
             Debug.Log("Spawn has been prevented");
             return false;

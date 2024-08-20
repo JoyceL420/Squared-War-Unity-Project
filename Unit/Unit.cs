@@ -86,16 +86,13 @@ public class unit : MonoBehaviour
         _unitType = unitType;
         switch (unitType.FirstCharacterToUpper())
         {
-            case "Archer":
-                _diagonalMovementAllowed = false;
-                break;
             case "Free":
                 // Able to move diagonally
                 
                 _diagonalMovementAllowed = true;
                 break;
             default:
-                // Foot soldier
+                // All other units
                 _unitType = "Foot";
                 _unitType = unitType;
                 _diagonalMovementAllowed = false;
@@ -103,7 +100,7 @@ public class unit : MonoBehaviour
         }
         _timesMoved = 0;
         // Finds the path
-        _path = _pathfinder.FindPath(CurrentPosition(), _mapSize, _obstacles);
+        _path = _pathfinder.FindPath(CurrentPosition(), _mapSize, _obstacles, team);
     }
 
     public void MovementVariablesReset()
@@ -191,6 +188,14 @@ public class unit : MonoBehaviour
                 UpdatePosition();
                 _attack.FootSoldierAttack(UnitPosition);
                 break; 
+            case "Archer":
+                _footMovement.Move(GetDirection());
+                UpdatePosition();
+                break;
+            case "Mage":
+                _footMovement.Move(GetDirection());
+                UpdatePosition();
+                break;
             default:
                 Debug.LogError("ERROR: _movementType variable OUTSIDE ACCEPTED RANGE");
                 break;  

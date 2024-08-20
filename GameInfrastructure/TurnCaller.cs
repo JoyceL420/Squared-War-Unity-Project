@@ -39,7 +39,7 @@ public class TurnCaller : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && _turnOngoing is false)
         { 
-            StartCoroutine(TurnLoop()); // This might cause massive issues! :) end me!
+            StartCoroutine(TurnLoop());
         }
         if (Input.GetKeyDown(KeyCode.R))
         { 
@@ -73,8 +73,7 @@ public class TurnCaller : MonoBehaviour
         while (_turnLoopReiterate)
         {
             // Reset flag
-            // SET TO INFINITE LOOP FOR DEBUGGING PATHFINDING
-            _turnLoopReiterate = true;
+            _turnLoopReiterate = false;
             // Check turn and run methods for that turn
             switch (_currentTurn)
             {
@@ -94,7 +93,7 @@ public class TurnCaller : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             
             // Determine if reiteration should happen
-            // _turnLoopReiterate = _teamController.CheckLoopStatus(_cachedReset);
+            _turnLoopReiterate = _teamController.CheckLoopStatus(_cachedReset);
         }
         Debug.Log("Loop ended");
         Reset();

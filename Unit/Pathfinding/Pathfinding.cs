@@ -16,15 +16,16 @@ public class Pathfinding : MonoBehaviour
     private List<Node> openList; // List of tiles that have yet to be evaulated
     private HashSet<Node> closedList; // List of evaulated tiles
 
+    private int unitTeam;
     private int targetX;
     private int minY;
     private int maxY;
     private Node[,] nodes;
 
-    public List<int> FindPath(Vector2Int start, Vector2Int mapSize, List<Vector2Int> obstacles)
+    public List<int> FindPath(Vector2Int start, Vector2Int mapSize, List<Vector2Int> obstacles, int team)
     {
         // Sets limit for grid + non-walkable spaces
-        InitializeGridAndVariables(obstacles, mapSize);
+        InitializeGridAndVariables(obstacles, mapSize, team);
         
         // Setting of start and goal/end nodes
         Node startNode = nodes[start.x, start.y];
@@ -90,10 +91,18 @@ public class Pathfinding : MonoBehaviour
         return null;
     }
 
-    private void InitializeGridAndVariables(List<Vector2Int> obstacles, Vector2Int mapSize)
+    private void InitializeGridAndVariables(List<Vector2Int> obstacles, Vector2Int mapSize, int team)
     {
         // Initialize variables
-        targetX = mapSize.x;
+        unitTeam = team;
+        if (unitTeam == 0)
+        {
+            targetX = mapSize.x;
+        }
+        else
+        {
+            targetX = 1;
+        }
         // Debug.Log(mapSize.x);
         minY = 1;
         maxY = mapSize.y;
@@ -172,13 +181,17 @@ public class Pathfinding : MonoBehaviour
         // If the unit is able to move diagonally
         if (DiagonalIsAllowed)
         { // Take into account diagonal neighbors as well
-            directions = new Vector2Int[] 
+            if (unitTeam == 0) // Blue
             {
-                new Vector2Int(1, 0), new Vector2Int(-1, 0),
-                new Vector2Int(0, 1), new Vector2Int(0, -1),
-                new Vector2Int(1, 1), new Vector2Int(-1, -1),
-                new Vector2Int(1, -1), new Vector2Int(-1, 1)
-            };
+                directions = new Vector2Int[] 
+                {
+                    new Vector2Int(1, 0), new Vector2Int(-1, 0),
+                    new Vector2Int(0, 1), new Vector2Int(0, -1),
+                    new Vector2Int(1, 1), new Vector2Int(-1, -1),
+                    new Vector2Int(1, -1), new Vector2Int(-1, 1)
+                };
+            }
+            
         }
 
         foreach (var direction in directions)
