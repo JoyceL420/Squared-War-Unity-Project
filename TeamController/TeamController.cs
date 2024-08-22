@@ -163,7 +163,7 @@ public class TeamController : MonoBehaviour
             _blueFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", _mapSize);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", _mapSize, 0);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -171,7 +171,7 @@ public class TeamController : MonoBehaviour
             _redFootSoldiers.Add(clone);
             _clones.Add(clone);
             _unitId = _redFootSoldiers.Count + 100;
-            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", _mapSize);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Foot", _mapSize, 1);
         }
     }
     public void CloneCavalier(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
@@ -184,7 +184,7 @@ public class TeamController : MonoBehaviour
             _blueCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize);
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 2);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -192,7 +192,7 @@ public class TeamController : MonoBehaviour
             _redCavaliers.Add(clone);
             _clones.Add(clone);
             _unitId = _redCavaliers.Count + 200;
-            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize);
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
         }
     }
     public void RemoveUnit(int unitId)

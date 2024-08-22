@@ -24,6 +24,7 @@ public class unit : MonoBehaviour
     private Collider2D _collider;
     private GameObject TeamController;
     private TeamController _teamController; 
+    private SpriteController _spriteController; 
     private Pathfinding _pathfinder;
     private FootMovement _footMovement;
     private int _mapWidth;
@@ -31,9 +32,7 @@ public class unit : MonoBehaviour
     private AttackTypes _attack;
     // private FootMovement _freeMovement;
     private int _directionPreviouslyMoved;
-    private bool _diagonalMovementAllowed;
-    [SerializeField] private Color _blue; // Update to sprite when graphics implemented
-    [SerializeField] private Color _red; // Update to sprite when graphics implemented
+    private bool _diagonalMovementAllowed; // Not referenced in this script
     [SerializeField] private SpriteRenderer _spriteRenderer;
     void Start()
     { // Runs before first frame
@@ -63,23 +62,17 @@ public class unit : MonoBehaviour
     {
         return _team;
     }
-    public void Initialize(int speed, int id, int team, (float x, float y) spawnPoint, List<Vector2Int> obstructedSquares, string unitType, Vector2Int mapSize)
+    public void Initialize(int speed, int id, int team, (float x, float y) spawnPoint, List<Vector2Int> obstructedSquares, string unitType, Vector2Int mapSize, int sprite)
     {
         _team = team;
-        if (_team == 1)
-        {
-            _spriteRenderer.color = _red;
-        }
-        else
-        { // (Is 0)
-            _spriteRenderer.color = _blue;
-        }
         _speed = speed;
         _unitId = id;
         _spawnPoint = (spawnPoint.x, spawnPoint.y);
         _obstacles = obstructedSquares;
         TeamController = GameObject.Find("TeamsController");
         _teamController = TeamController.GetComponent<TeamController>();
+        _spriteController = GetComponent<SpriteController>();
+        _spriteController.InitializeSprite(sprite);
         _pathfinder = GetComponent<Pathfinding>();
         _attack = GetComponent<AttackTypes>();
         _mapSize = mapSize;
@@ -100,7 +93,7 @@ public class unit : MonoBehaviour
         }
         _timesMoved = 0;
         // Finds the path
-        _path = _pathfinder.FindPath(CurrentPosition(), _mapSize, _obstacles, team);
+        _path = _pathfinder.FindPath(CurrentPosition(), _mapSize, _obstacles, team, _diagonalMovementAllowed);
     }
 
     public void MovementVariablesReset()
@@ -159,7 +152,7 @@ public class unit : MonoBehaviour
     }
     private int GetDirection()
     {
-        Debug.Log($"Index: {_timesMoved -1}");
+        // Debug.Log($"Index: {_timesMoved -1}");
         if (_path.Count == _timesMoved)
         {
             _cantMove = true;
@@ -169,7 +162,7 @@ public class unit : MonoBehaviour
     }
     void Move() 
     {
-        Debug.Log($"Move was called with type {_unitType}");
+        // Debug.Log($"Move was called with type {_unitType}");
         _timesMovedInTurn += 1; // Attempt to move being called
         switch (_unitType)
         { // Determines how a unit will move or attack
@@ -255,7 +248,7 @@ public class unit : MonoBehaviour
         // Whether by an enemy or ally.
 
         isDead = true;
-        Debug.Log("UNIT:" + _unitId + " OF TEAM " + _team + " IS DED!");
+        // Debug.Log("UNIT:" + _unitId + " OF TEAM " + _team + " IS DED!");
         transform.position = new Vector2(100, 100);
     }
     public void Reset()

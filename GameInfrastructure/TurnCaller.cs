@@ -39,6 +39,7 @@ public class TurnCaller : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && _turnOngoing is false)
         { 
+            
             StartCoroutine(TurnLoop());
         }
         if (Input.GetKeyDown(KeyCode.R))

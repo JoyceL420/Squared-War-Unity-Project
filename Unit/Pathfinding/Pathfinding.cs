@@ -22,10 +22,11 @@ public class Pathfinding : MonoBehaviour
     private int maxY;
     private Node[,] nodes;
 
-    public List<int> FindPath(Vector2Int start, Vector2Int mapSize, List<Vector2Int> obstacles, int team)
+    public List<int> FindPath(Vector2Int start, Vector2Int mapSize, List<Vector2Int> obstacles, int team, bool allowDiagonal)
     {
         // Sets limit for grid + non-walkable spaces
         InitializeGridAndVariables(obstacles, mapSize, team);
+        DiagonalIsAllowed = allowDiagonal;
         
         // Setting of start and goal/end nodes
         Node startNode = nodes[start.x, start.y];
@@ -33,6 +34,7 @@ public class Pathfinding : MonoBehaviour
 
         openList = new List<Node> { startNode };
         closedList = new HashSet<Node>();
+
 
         while (openList.Count > 0)
         {

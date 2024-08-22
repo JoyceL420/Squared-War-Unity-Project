@@ -72,7 +72,6 @@ public class FootSoldierDragPlacer : MonoBehaviour
     }
     private bool CheckObstruction()
     {
-        Debug.Log($"Attempting to spawn at ({roundedXPos}, {roundedYPos}) with limit ({_mapSize.mapWidth}, {_mapSize.mapHeight})");
         // Checks if the square is occupied by a unit, and is within the allowed range
         foreach (var coordinate in _teamsController.occupiedSquares)
         { // If the location where a unit is trying to be spawned in has been occupied

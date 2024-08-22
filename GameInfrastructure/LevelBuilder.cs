@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class LevelBuilder : MonoBehaviour
 {
@@ -12,11 +13,13 @@ public class LevelBuilder : MonoBehaviour
     private int _mapWidth;
     private int _mapHeight;
     private GameObject _obstaclePrefab;
-    private List <Vector2Int> obstructedSquares;
+    private List <Vector2Int> _obstructedSquares;
+    private List <GameObject> _obstaclesList;
     // Start is called before the first frame update
     void Start()
     {
-        obstructedSquares = new List<Vector2Int>();
+        _obstaclesList = new List<GameObject>(); 
+        _obstructedSquares = new List<Vector2Int>();
         // This Script gets the data from LevelSpecifications based on what level was chosen
         // And places the units and battle elements and tells them their starting positions
         
@@ -35,22 +38,30 @@ public class LevelBuilder : MonoBehaviour
         _mapHeight = 9;
         _teamsController.LevelLoadInitialize((_mapWidth, _mapHeight));
         _unitPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
-        obstructedSquares.Add(new Vector2Int(4, 2));
-        obstructedSquares.Add(new Vector2Int(3, 2));
-        obstructedSquares.Add(new Vector2Int(4, 3));
-        obstructedSquares.Add(new Vector2Int(4, 4));
-        obstructedSquares.Add(new Vector2Int(3, 4));
-        // obstructedSquares.Add(new Vector2Int(4, 5));
-        obstructedSquares.Add(new Vector2Int(4, 6));
-        obstructedSquares.Add(new Vector2Int(4, 7));
-        obstructedSquares.Add(new Vector2Int(4, 8));
+        _obstructedSquares.Add(new Vector2Int(4, 2));
+        _obstructedSquares.Add(new Vector2Int(3, 2));
+        _obstructedSquares.Add(new Vector2Int(4, 3));
+        _obstructedSquares.Add(new Vector2Int(4, 4));
+        _obstructedSquares.Add(new Vector2Int(3, 4));
+        // _obstructedSquares.Add(new Vector2Int(4, 5));
+        _obstructedSquares.Add(new Vector2Int(4, 6));
+        _obstructedSquares.Add(new Vector2Int(4, 7));
+        _obstructedSquares.Add(new Vector2Int(4, 8));
         EstablishBoundary();
+    }
+
+    private void Update()   
+    {
+        if (Input.GetKeyDown(KeyCode.Escape)) // DEBUG
+        {
+            DeactivateLevel();
+        }
     }
 
     void PlaceObstructions()
     {
         // Obstacle placement
-        foreach (Vector2Int coordinate in obstructedSquares)
+        foreach (Vector2Int coordinate in _obstructedSquares)
         {
             PlaceObstacle(coordinate.x, coordinate.y);
             _teamsController.obstructedSquares.Add(new Vector2Int (coordinate.x, coordinate.y));
@@ -67,19 +78,34 @@ public class LevelBuilder : MonoBehaviour
         // Adds additional obstructed tiles surrounding the grid
         for (int x = 0; x <= _mapWidth + 1; x++)
         {
-            obstructedSquares.Add(new Vector2Int (x, 0)); // bottom
-            obstructedSquares.Add(new Vector2Int (x, _mapHeight + 1)); // top
+            _obstructedSquares.Add(new Vector2Int (x, 0)); // bottom
+            _obstructedSquares.Add(new Vector2Int (x, _mapHeight + 1)); // top
         }
         for (int y = 1; y < _mapHeight + 1; y++)
         {
-            obstructedSquares.Add(new Vector2Int (0, y)); // left
-            obstructedSquares.Add(new Vector2Int (_mapWidth + 1, y)); // right
+            _obstructedSquares.Add(new Vector2Int (0, y)); // left
+            _obstructedSquares.Add(new Vector2Int (_mapWidth + 1, y)); // right
         }
         // Now spawn obstructions
         PlaceObstructions();
     }
     void PlaceObstacle(float xSpawnPoint, float ySpawnPoint)
     {
-        Instantiate(_obstaclePrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
+        GameObject obstacle = Instantiate(_obstaclePrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
+        _obstaclesList.Add(obstacle);
+    }
+
+    private void DeactivateLevel()
+    {
+        _obstructedSquares.Clear();
+        _tilesManager.RemoveTiles();
+        // This method simply removes all tiles that have been created
+        for (int i = _obstaclesList.Count - 1; i >= 0; i--)
+        { // Iterate backwards to prevent errors from removal of items mid-iteration
+            GameObject obstacle = _obstaclesList[i];
+            _obstaclesList.Remove(obstacle);
+            Destroy(obstacle);
+        }
+        
     }
 }
