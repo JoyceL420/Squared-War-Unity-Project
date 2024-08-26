@@ -9,6 +9,7 @@ public class unit : MonoBehaviour
     public bool isDead;
     [SerializeField] private int _team; // 0 = Blue/you, 1 = Red
     public Vector2Int UnitPosition;
+    private int _lastMovedDirection;
     //private string unitType;
     [SerializeField] private int _speed;
     public int _timesMoved;
@@ -78,14 +79,20 @@ public class unit : MonoBehaviour
         _mapSize = mapSize;
         _unitType = unitType;
         switch (unitType.FirstCharacterToUpper())
-        {
-            case "Free":
-                // Able to move diagonally
-                
+        { // Validates/sets movement settings
+            case "Cavalier":
+                _diagonalMovementAllowed = false;
+                break;
+            case "Rogue":
                 _diagonalMovementAllowed = true;
                 break;
+            case "Archer":
+                _diagonalMovementAllowed = false;
+                break;
+            case "Mage":
+                _diagonalMovementAllowed = false;
+                break;
             default:
-                // All other units
                 _unitType = "Foot";
                 _unitType = unitType;
                 _diagonalMovementAllowed = false;
@@ -162,32 +169,33 @@ public class unit : MonoBehaviour
     }
     void Move() 
     {
-        // Debug.Log($"Move was called with type {_unitType}");
         _timesMovedInTurn += 1; // Attempt to move being called
         switch (_unitType)
-        { // Determines how a unit will move or attack
-            case "Foot":
+        { // Determines how a unit will move and attack
+            case "Foot": // Complete
                 _footMovement.Move(GetDirection());
                 UpdatePosition();
                 _attack.FootSoldierAttack(UnitPosition);
                 break;
-            case "Cavalier":
+            case "Cavalier": // Complete
                 _footMovement.Move(GetDirection());
                 UpdatePosition();
                 _attack.FootSoldierAttack(UnitPosition);
                 break;
-            case "Free":
+            case "Rogue": // Complete
                 _footMovement.Move(GetDirection());
                 UpdatePosition();
                 _attack.FootSoldierAttack(UnitPosition);
                 break; 
-            case "Archer":
+            case "Archer": // Needs testing
                 _footMovement.Move(GetDirection());
                 UpdatePosition();
+                _attack.ArcherAttack(UnitPosition, _lastMovedDirection);
                 break;
-            case "Mage":
+            case "Mage": // Needs testing
                 _footMovement.Move(GetDirection());
                 UpdatePosition();
+                _attack.MageAttack(UnitPosition, _lastMovedDirection);
                 break;
             default:
                 Debug.LogError("ERROR: _movementType variable OUTSIDE ACCEPTED RANGE");
@@ -198,6 +206,7 @@ public class unit : MonoBehaviour
     public void MoveTile(int direction)
     {
         // Debug.Log("Move tile called");
+        _lastMovedDirection = direction;
         switch (direction)
         {
             case 1:
@@ -232,6 +241,7 @@ public class unit : MonoBehaviour
                 transform.position = new Vector2(transform.position.x - 1, transform.position.y + 1);
                 break;
             default:
+                // Error case for an attempted movement outside of allowed range
                 Debug.LogError($"Attempted movement outside range {direction} for: {_unitId}");
                 break;
         }

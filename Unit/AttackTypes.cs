@@ -18,21 +18,39 @@ public class AttackTypes : MonoBehaviour
         _teamController = TeamController.GetComponent<TeamController>();
     }
     public void FootSoldierAttack(Vector2Int coordinate)
-    { // Foot soldier attacks means that the unit attacks the tiles
-        // that it stands on.
-        // This may apply to units that isn't a foot soldier e.g. cavalier
+    { 
+        // Sample comment
         _teamController.affectedSquares.Add((coordinate, _unit.GetId(), _unit.GetTeam()));
     }
     public void ArcherAttack(Vector2Int coordinate, int direction)
     { 
         // Attack a space ahead dependent on move direction
         _teamController.affectedSquares.Add((coordinate, _unit.GetId(), _unit.GetTeam()));
+        _teamController.affectedSquares.Add((coordinate + GetVectorFromDirectionArcher(direction), _unit.GetId(), _unit.GetTeam()));
     }
     public void MageAttack(Vector2Int coordinate, int direction)
     { 
         // Attack sides dependent on move direction
-
-        //TODO
         _teamController.affectedSquares.Add((coordinate, _unit.GetId(), _unit.GetTeam()));
+        _teamController.affectedSquares.Add((coordinate + GetVectorFromDirectionMage(direction), _unit.GetId(), _unit.GetTeam()));
+        _teamController.affectedSquares.Add((coordinate - GetVectorFromDirectionMage(direction), _unit.GetId(), _unit.GetTeam()));
+    }
+
+    private Vector2Int GetVectorFromDirectionArcher(int direction)
+    {
+        if (direction == 1) return new Vector2Int(0, 1); // Moved Up
+        if (direction == 3) return new Vector2Int(1, 0); // Moved Right
+        if (direction == 5) return new Vector2Int(0, -1); // Moved Down
+        if (direction == 7) return new Vector2Int(-1, 0); // Moved Left
+        return new Vector2Int(0, 0); // Null
+    }
+
+    private Vector2Int GetVectorFromDirectionMage(int direction)
+    {
+        if (direction == 1) return new Vector2Int(1, 0); // Moved Up
+        if (direction == 3) return new Vector2Int(0, 1); // Moved Right
+        if (direction == 5) return new Vector2Int(1, 0); // Moved Down
+        if (direction == 7) return new Vector2Int(0, 1); // Moved Left
+        return new Vector2Int(0, 0); // Null
     }
 }

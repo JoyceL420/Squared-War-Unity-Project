@@ -12,9 +12,15 @@ public class TeamController : MonoBehaviour
     private List<GameObject> _blueClones = new List<GameObject>();
     private List<GameObject> _blueFootSoldiers = new List<GameObject>();
     private List<GameObject> _blueCavaliers = new List<GameObject>();
+    private List<GameObject> _blueRogues = new List<GameObject>();
+    private List<GameObject> _blueArchers = new List<GameObject>();
+    private List<GameObject> _blueMages = new List<GameObject>();
     private List<GameObject> _redClones = new List<GameObject>();
     private List<GameObject> _redFootSoldiers = new List<GameObject>();
     private List<GameObject> _redCavaliers = new List<GameObject>();
+    private List<GameObject> _redRogues = new List<GameObject>();
+    private List<GameObject> _redArchers = new List<GameObject>();
+    private List<GameObject> _redMages = new List<GameObject>();
     private List<GameObject> _clones = new List<GameObject>();
     private List<GameObject> _unitsToMove = new List<GameObject>();
     public List<(Vector2Int coordinate, int id, int team)> affectedSquares;
@@ -195,6 +201,69 @@ public class TeamController : MonoBehaviour
             unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
         }
     }
+    public void CloneRogue(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
+    { // Clone and initialization of the rogue as called by the player or LevelBuilder
+        GameObject clone = Instantiate(_unitPrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
+        unit unit = clone.GetComponent<unit>();
+        if (unit != null && team == 0)
+        { // Blue Team
+            _blueClones.Add(clone);
+            _blueRogues.Add(clone);
+            _clones.Add(clone);
+            _unitId = _blueRogues.Count + 300;
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 2);
+        }
+        else if (unit != null && team == 1)
+        { // Red Team
+            _redClones.Add(clone);
+            _redRogues.Add(clone);
+            _clones.Add(clone);
+            _unitId = _redRogues.Count + 300;
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
+        }
+    }
+    public void CloneArcher(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
+    { // Clone and initialization of the archer as called by the player or LevelBuilder
+        GameObject clone = Instantiate(_unitPrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
+        unit unit = clone.GetComponent<unit>();
+        if (unit != null && team == 0)
+        { // Blue Team
+            _blueClones.Add(clone);
+            _blueArchers.Add(clone);
+            _clones.Add(clone);
+            _unitId = _blueArchers.Count + 400;
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 2);
+        }
+        else if (unit != null && team == 1)
+        { // Red Team
+            _redClones.Add(clone);
+            _redArchers.Add(clone);
+            _clones.Add(clone);
+            _unitId = _redArchers.Count + 400;
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
+        }
+    }
+    public void CloneMage(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
+    { // Clone and initialization of the mage as called by the player or LevelBuilder
+        GameObject clone = Instantiate(_unitPrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
+        unit unit = clone.GetComponent<unit>();
+        if (unit != null && team == 0)
+        { // Blue Team
+            _blueClones.Add(clone);
+            _blueMages.Add(clone);
+            _clones.Add(clone);
+            _unitId = _blueMages.Count + 500;
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 2);
+        }
+        else if (unit != null && team == 1)
+        { // Red Team
+            _redClones.Add(clone);
+            _redMages.Add(clone);
+            _clones.Add(clone);
+            _unitId = _redMages.Count + 500;
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
+        }
+    }
     public void RemoveUnit(int unitId)
     { // Loops backwards to prevent errors from removing item during iteration
         for (int i = _blueClones.Count - 1; i >= 0; i--)
@@ -242,6 +311,39 @@ public class TeamController : MonoBehaviour
                     unit unit = clone.GetComponent<unit>();
                     _unitId += 1;
                     unit?.SetId(200+_unitId);
+                }
+                break;
+            case "Rogue":
+                // Cavaliers
+                _blueRogues.Remove(unitToRemove);
+                _unitId = 0;
+                foreach (GameObject clone in _blueCavaliers)
+                {
+                    unit unit = clone.GetComponent<unit>();
+                    _unitId += 1;
+                    unit?.SetId(300+_unitId);
+                }
+                break;
+            case "Archer":
+                // Cavaliers
+                _blueArchers.Remove(unitToRemove);
+                _unitId = 0;
+                foreach (GameObject clone in _blueCavaliers)
+                {
+                    unit unit = clone.GetComponent<unit>();
+                    _unitId += 1;
+                    unit?.SetId(400+_unitId);
+                }
+                break;
+            case "Mage":
+                // Cavaliers
+                _blueMages.Remove(unitToRemove);
+                _unitId = 0;
+                foreach (GameObject clone in _blueCavaliers)
+                {
+                    unit unit = clone.GetComponent<unit>();
+                    _unitId += 1;
+                    unit?.SetId(500+_unitId);
                 }
                 break;
             default:
