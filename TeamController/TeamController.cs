@@ -74,14 +74,14 @@ public class TeamController : MonoBehaviour
         {
             MoveUnits(_unitsToMove); // Move the units that still have movement left (remove themselves from the list when have no movement)
             CheckAllOverlaps(); // Check overlaps 
-            yield return new WaitForSeconds(0.5f); // Delay between movements
+            yield return new WaitForSeconds(1.5f); // Delay between movements
         } // Turn end
         foreach (GameObject clone in _clones)
         {
             unit unit = clone.GetComponent<unit>();
             unit.MovementVariablesReset(); // Reset direction variables
         }
-        Debug.Log("Turn finished");
+        // Debug.Log("Turn finished");
         _turnCaller.FinishTurn();
     }
     private void TurnPrep(int team)

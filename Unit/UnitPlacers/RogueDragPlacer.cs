@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class FootSoldierDragPlacer : MonoBehaviour
+public class RogueDragPlacer : MonoBehaviour
 {
-    [SerializeField] private GameObject cameraPosition;
+    private GameObject _cameraPosition;
     private bool dragging;
     private Vector3 mousePos;
     private Vector2Int mousePos2D;
@@ -22,6 +22,7 @@ public class FootSoldierDragPlacer : MonoBehaviour
         dragging = false;
         GameObject TeamsController = GameObject.Find("TeamsController");
         _teamsController = TeamsController.GetComponent<TeamController>();
+        _cameraPosition = GameObject.Find("Main Camera/Game Manager");
         occupiedSquares = new List<(float x, float y)>();
     }
     public void LevelLoadInitialize ((int, int) MapSize)
@@ -30,10 +31,6 @@ public class FootSoldierDragPlacer : MonoBehaviour
     }
     void Update()
     {
-        if (dragging == false)
-        {
-            transform.position = new Vector2 (cameraPosition.transform.position.x - 9, cameraPosition.transform.position.y - 4);
-        }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             _team = 1;
@@ -63,12 +60,14 @@ public class FootSoldierDragPlacer : MonoBehaviour
         // Check position and place unit in accordance to whichever grid tile is highlighted
         roundedXPos = Mathf.RoundToInt(transform.position.x);
         roundedYPos = Mathf.RoundToInt(transform.position.y);
+        Debug.Log($"Attempting spawn at ({roundedXPos}, {roundedYPos})");
         // 
         if (CheckObstruction())
         {
             _teamsController.occupiedSquares.Add(new Vector2Int (roundedXPos, roundedYPos));
             SummonUnit(roundedXPos, roundedYPos);
         }
+        transform.position = new Vector2(_cameraPosition.transform.position.x - 7, _cameraPosition.transform.position.y - 4.3f);
     }
     private bool CheckObstruction()
     {
@@ -77,22 +76,22 @@ public class FootSoldierDragPlacer : MonoBehaviour
         { // If the location where a unit is trying to be spawned in has been occupied
             if (coordinate.x == roundedXPos && coordinate.y == roundedYPos)
             { // Prevent the spawn
-                Debug.Log("Spawn has been prevented");
-                return false;
-            }
-        } 
-        foreach (var coordinate in _teamsController.obstructedSquares)
-        {
-            if (coordinate.x == roundedXPos && coordinate.y == roundedYPos)
-            { // Prevent the spawn
-                Debug.Log("Spawn has been prevented");
+                Debug.Log("Spawn has been prevented 1");
                 return false;
             }
         }
+        foreach (var coordinate in _teamsController.obstructedSquares)
+        { // If the location where a unit is trying to be spawned in has been occupied
+            if (coordinate.x == roundedXPos && coordinate.y == roundedYPos)
+            { // Prevent the spawn
+                Debug.Log("Spawn has been prevented case 2");
+                return false;
+            }
+        } 
         // Check for whether the spawn is taking place outside the boundaries
         if (roundedXPos > _mapSize.mapWidth || roundedXPos <= 0 || roundedYPos > _mapSize.mapHeight || roundedYPos <= 0)
         {
-            Debug.Log("Spawn has been prevented");
+            Debug.Log("Spawn has been prevented case 3");
             return false;
         }
         // Otherwise it will be allowed
@@ -100,7 +99,7 @@ public class FootSoldierDragPlacer : MonoBehaviour
     }
     void SummonUnit(float xSpawnPoint, float ySpawnPoint)
     {
-        _teamsController.CloneFootSoldier(xSpawnPoint, ySpawnPoint, _team);
+        _teamsController.CloneRogue(xSpawnPoint, ySpawnPoint, _team);
     }
 
     Vector2 GetMousePos()

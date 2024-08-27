@@ -21,6 +21,7 @@ public class AttackTypes : MonoBehaviour
     { 
         // Sample comment
         _teamController.affectedSquares.Add((coordinate, _unit.GetId(), _unit.GetTeam()));
+        Debug.Log($"Tile ({coordinate.x}, {coordinate.y}) Attaced");
     }
     public void ArcherAttack(Vector2Int coordinate, int direction)
     { 

@@ -15,7 +15,7 @@ public class SpriteController : MonoBehaviour
     }
     public void InitializeSprite(int SpriteId)
     {
-        Debug.Log(SpriteId);
+        // Debug.Log(SpriteId);
         switch (SpriteId)
         {
             case 0: // Blue foot soldier

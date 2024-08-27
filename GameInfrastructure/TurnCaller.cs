@@ -91,12 +91,12 @@ public class TurnCaller : MonoBehaviour
                     break;
             }
             // Delay before reiteration
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(2f);
             
             // Determine if reiteration should happen
             _turnLoopReiterate = _teamController.CheckLoopStatus(_cachedReset);
         }
-        Debug.Log("Loop ended");
+        // Debug.Log("Loop ended");
         Reset();
     }
 }
