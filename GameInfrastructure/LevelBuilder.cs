@@ -9,7 +9,12 @@ public class LevelBuilder : MonoBehaviour
     // WILL BE ASSIGNED TO AN EMPTY OBJECT LATER
     private TeamController _teamsController; 
     private TilesManager _tilesManager;
-    private FootSoldierDragPlacer _unitPlacer;
+    private FootSoldierDragPlacer _footsoldierPlacer;
+    private CavalierDragPlacer _cavalierPlacer;
+    private RogueDragPlacer _roguePlacer;
+    private ArcherDragPlacer _archerPlacer;
+    private MageDragPlacer _magePlacer;
+    private LevelData _levelData;
     private int _mapWidth;
     private int _mapHeight;
     private GameObject _obstaclePrefab;
@@ -29,25 +34,20 @@ public class LevelBuilder : MonoBehaviour
         GameObject TilesManager = GameObject.Find("Main Camera/Game Manager");
         _tilesManager = TilesManager.GetComponent<TilesManager>();
         GameObject UnitPlacer = GameObject.Find("FootSoldierPlacer");
-        _unitPlacer = UnitPlacer.GetComponent<FootSoldierDragPlacer>();
-
+        _footsoldierPlacer = UnitPlacer.GetComponent<FootSoldierDragPlacer>();
+        UnitPlacer = GameObject.Find("CavalierPlacer");
+        _cavalierPlacer = UnitPlacer.GetComponent<CavalierDragPlacer>();
+        UnitPlacer = GameObject.Find("RoguePlacer");
+        _roguePlacer = UnitPlacer.GetComponent<RogueDragPlacer>();
+        UnitPlacer = GameObject.Find("ArcherPlacer");
+        _archerPlacer = UnitPlacer.GetComponent<ArcherDragPlacer>();
+        UnitPlacer = GameObject.Find("MagePlacer");
+        _magePlacer = UnitPlacer.GetComponent<MageDragPlacer>();
         _obstaclePrefab = GameObject.Find("ObstaclePrefab");
+        _levelData = GetComponent<LevelData>();
 
-        // DEBUG STUFF
-        _mapWidth = 16;
-        _mapHeight = 9;
-        _teamsController.LevelLoadInitialize((_mapWidth, _mapHeight));
-        _unitPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
-        _obstructedSquares.Add(new Vector2Int(4, 2));
-        _obstructedSquares.Add(new Vector2Int(3, 2));
-        _obstructedSquares.Add(new Vector2Int(4, 3));
-        _obstructedSquares.Add(new Vector2Int(4, 4));
-        _obstructedSquares.Add(new Vector2Int(3, 4));
-        // _obstructedSquares.Add(new Vector2Int(4, 5));
-        _obstructedSquares.Add(new Vector2Int(4, 6));
-        _obstructedSquares.Add(new Vector2Int(4, 7));
-        _obstructedSquares.Add(new Vector2Int(4, 8));
-        EstablishBoundary();
+        // DEBUG LEVEL
+        LoadLevel(0);
     }
 
     private void Update()   
@@ -107,5 +107,34 @@ public class LevelBuilder : MonoBehaviour
             Destroy(obstacle);
         }
         
+    }
+    private void LoadLevel(int level)
+    {
+        switch(level)
+        {
+            case 0:
+            _mapWidth = 16;
+            _mapHeight = 9;
+            InitializeControllers();
+            foreach (Vector2Int obstacle in _levelData.GetObstaclesForLevel(level))
+            {
+                _obstructedSquares.Add(obstacle);
+            }
+            PlaceObstructions();
+            EstablishBoundary();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void InitializeControllers()
+    {
+        _teamsController.LevelLoadInitialize((_mapWidth, _mapHeight));
+        _footsoldierPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
+        _cavalierPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
+        _roguePlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
+        _archerPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
+        _magePlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
     }
 }

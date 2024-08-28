@@ -60,8 +60,7 @@ public class CavalierDragPlacer : MonoBehaviour
         // Check position and place unit in accordance to whichever grid tile is highlighted
         roundedXPos = Mathf.RoundToInt(transform.position.x);
         roundedYPos = Mathf.RoundToInt(transform.position.y);
-        Debug.Log($"Attempting spawn at ({roundedXPos}, {roundedYPos})");
-        // 
+        // Debug.Log($"Attempting spawn at ({roundedXPos}, {roundedYPos})");
         if (CheckObstruction())
         {
             _teamsController.occupiedSquares.Add(new Vector2Int (roundedXPos, roundedYPos));
@@ -91,8 +90,6 @@ public class CavalierDragPlacer : MonoBehaviour
         // Check for whether the spawn is taking place outside the boundaries
         if (roundedXPos > _mapSize.mapWidth || roundedXPos <= 0 || roundedYPos > _mapSize.mapHeight || roundedYPos <= 0)
         {
-            Debug.Log($"{roundedXPos} vs {_mapSize.mapWidth}");
-            Debug.Log($"{roundedYPos} vs {_mapSize.mapHeight}");
             Debug.Log("Spawn has been prevented case 3");
             return false;
         }

@@ -61,8 +61,7 @@ public class FootSoldierDragPlacer : MonoBehaviour
         // Check position and place unit in accordance to whichever grid tile is highlighted
         roundedXPos = Mathf.RoundToInt(transform.position.x);
         roundedYPos = Mathf.RoundToInt(transform.position.y);
-        Debug.Log($"Attempting spawn at ({roundedXPos}, {roundedYPos})");
-        // 
+        // Debug.Log($"Attempting spawn at ({roundedXPos}, {roundedYPos})");
         if (CheckObstruction())
         {
             _teamsController.occupiedSquares.Add(new Vector2Int (roundedXPos, roundedYPos));
