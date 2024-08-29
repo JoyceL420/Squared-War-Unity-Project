@@ -74,7 +74,7 @@ public class TeamController : MonoBehaviour
         {
             MoveUnits(_unitsToMove); // Move the units that still have movement left (remove themselves from the list when have no movement)
             CheckAllOverlaps(); // Check overlaps 
-            yield return new WaitForSeconds(1.5f); // Delay between movements
+            yield return new WaitForSeconds(0.5f); // Delay between movements
         } // Turn end
         foreach (GameObject clone in _clones)
         {
@@ -211,7 +211,7 @@ public class TeamController : MonoBehaviour
             _blueRogues.Add(clone);
             _clones.Add(clone);
             _unitId = _blueRogues.Count + 300;
-            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 2);
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Rogue", _mapSize, 4);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -219,7 +219,7 @@ public class TeamController : MonoBehaviour
             _redRogues.Add(clone);
             _clones.Add(clone);
             _unitId = _redRogues.Count + 300;
-            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
+            unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Rogue", _mapSize, 5);
         }
     }
     public void CloneArcher(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
@@ -232,7 +232,7 @@ public class TeamController : MonoBehaviour
             _blueArchers.Add(clone);
             _clones.Add(clone);
             _unitId = _blueArchers.Count + 400;
-            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 2);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Archer", _mapSize, 6);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -240,7 +240,7 @@ public class TeamController : MonoBehaviour
             _redArchers.Add(clone);
             _clones.Add(clone);
             _unitId = _redArchers.Count + 400;
-            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Archer", _mapSize, 7);
         }
     }
     public void CloneMage(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
@@ -253,7 +253,7 @@ public class TeamController : MonoBehaviour
             _blueMages.Add(clone);
             _clones.Add(clone);
             _unitId = _blueMages.Count + 500;
-            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 2);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Mage", _mapSize, 8);
         }
         else if (unit != null && team == 1)
         { // Red Team
@@ -261,7 +261,7 @@ public class TeamController : MonoBehaviour
             _redMages.Add(clone);
             _clones.Add(clone);
             _unitId = _redMages.Count + 500;
-            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
+            unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Mage", _mapSize, 9);
         }
     }
     public void RemoveUnit(int unitId)

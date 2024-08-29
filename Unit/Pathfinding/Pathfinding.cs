@@ -183,6 +183,7 @@ public class Pathfinding : MonoBehaviour
         // If the unit is able to move diagonally
         if (DiagonalIsAllowed)
         { // Take into account diagonal neighbors as well
+            Debug.Log("Diagonal movement check");
             if (unitTeam == 0) // Blue
             {
                 directions = new Vector2Int[] 

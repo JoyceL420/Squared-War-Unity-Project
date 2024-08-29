@@ -85,6 +85,7 @@ public class unit : MonoBehaviour
                 break;
             case "Rogue":
                 _diagonalMovementAllowed = true;
+                Debug.Log("Diagonal set to true");
                 break;
             case "Archer":
                 _diagonalMovementAllowed = false;
@@ -183,7 +184,7 @@ public class unit : MonoBehaviour
                 UpdatePosition();
                 _attack.FootSoldierAttack(UnitPosition);
                 break;
-            case "Rogue": // Complete
+            case "Rogue": // Needs testing
                 _footMovement.Move(GetDirection());
                 UpdatePosition();
                 _attack.FootSoldierAttack(UnitPosition);

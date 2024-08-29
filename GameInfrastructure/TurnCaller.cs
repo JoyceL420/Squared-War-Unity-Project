@@ -74,7 +74,7 @@ public class TurnCaller : MonoBehaviour
         while (_turnLoopReiterate)
         {
             // Reset flag
-            _turnLoopReiterate = false;
+            _turnLoopReiterate = false; // Forces an infinite loop set to false when done with debugging
             // Check turn and run methods for that turn
             switch (_currentTurn)
             {
@@ -91,10 +91,11 @@ public class TurnCaller : MonoBehaviour
                     break;
             }
             // Delay before reiteration
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
             
             // Determine if reiteration should happen
             _turnLoopReiterate = _teamController.CheckLoopStatus(_cachedReset);
+            _turnLoopReiterate = true; // Forces an infinite loop set to false when done with debugging
         }
         // Debug.Log("Loop ended");
         Reset();
