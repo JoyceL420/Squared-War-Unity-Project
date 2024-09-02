@@ -99,7 +99,7 @@ public class unit : MonoBehaviour
                 _diagonalMovementAllowed = false;
                 break;
         }
-        Debug.Log($"Unit of type {_unitType} Initialized with id {_unitId}");
+        // Debug.Log($"Unit of type {_unitType} Initialized with id {_unitId}");
         _timesMoved = 0;
         // Finds the path
         _path = _pathfinder.FindPath(CurrentPosition(), _mapSize, _obstacles, team, _diagonalMovementAllowed);

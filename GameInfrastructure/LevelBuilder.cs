@@ -5,10 +5,9 @@ using UnityEngine.AI;
 
 public class LevelBuilder : MonoBehaviour
 {
-    // TEMPORARILY ASSIGNED TO Main Camera GAMEOBJECT FOR TESTING
-    // WILL BE ASSIGNED TO AN EMPTY OBJECT LATER
     private TeamController _teamsController; 
     private TilesManager _tilesManager;
+    private CameraMovement _cameraMover;
     private FootSoldierDragPlacer _footsoldierPlacer;
     private CavalierDragPlacer _cavalierPlacer;
     private RogueDragPlacer _roguePlacer;
@@ -20,7 +19,6 @@ public class LevelBuilder : MonoBehaviour
     private GameObject _obstaclePrefab;
     private List <Vector2Int> _obstructedSquares;
     private List <GameObject> _obstaclesList;
-    // Start is called before the first frame update
     void Start()
     {
         _obstaclesList = new List<GameObject>(); 
@@ -29,6 +27,7 @@ public class LevelBuilder : MonoBehaviour
         // And places the units and battle elements and tells them their starting positions
         
         // Assigning references
+        _cameraMover = GetComponent<CameraMovement>();
         GameObject TeamsController = GameObject.Find("TeamsController");
         _teamsController = TeamsController.GetComponent<TeamController>();
         GameObject TilesManager = GameObject.Find("Main Camera/Game Manager");
@@ -106,35 +105,69 @@ public class LevelBuilder : MonoBehaviour
             _obstaclesList.Remove(obstacle);
             Destroy(obstacle);
         }
-        
+        _cameraMover.LevelUnload();
+        _footsoldierPlacer.LevelUnload();
+        _cavalierPlacer.LevelUnload();
+        _roguePlacer.LevelUnload();
+        _archerPlacer.LevelUnload();
+        _magePlacer.LevelUnload();
     }
     private void LoadLevel(int level)
     {
         switch(level)
         {
             case 0:
-            _mapWidth = 16;
-            _mapHeight = 9;
-            InitializeControllers();
-            foreach (Vector2Int obstacle in _levelData.GetObstaclesForLevel(level))
-            {
-                _obstructedSquares.Add(obstacle);
-            }
-            PlaceObstructions();
-            EstablishBoundary();
+                _mapWidth = 16;
+                _mapHeight = 9;
+                foreach (Vector2Int obstacle in _levelData.GetObstaclesForLevel(level))
+                {
+                    _obstructedSquares.Add(obstacle);
+                }
+                InitializeControllers(level);
+                foreach (var unit in _levelData.GetUnitsForLevel(level))
+                {
+                    SummonUnit(unit.position, unit.type);
+                }
                 break;
             default:
                 break;
         }
+        PlaceObstructions();
+        EstablishBoundary();
+        _cameraMover.LevelLoadInitialize((_mapWidth, _mapHeight));
     }
 
-    private void InitializeControllers()
+    private void InitializeControllers(int level)
     {
-        _teamsController.LevelLoadInitialize((_mapWidth, _mapHeight));
-        _footsoldierPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
-        _cavalierPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
-        _roguePlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
-        _archerPlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
-        _magePlacer.LevelLoadInitialize((_mapWidth, _mapHeight));
+        _teamsController.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetObstaclesForLevel(level));
+        _footsoldierPlacer.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetUnitLimitsForLevel(level)[0]);
+        _cavalierPlacer.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetUnitLimitsForLevel(level)[1]);
+        _roguePlacer.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetUnitLimitsForLevel(level)[2]);
+        _archerPlacer.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetUnitLimitsForLevel(level)[3]);
+        _magePlacer.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetUnitLimitsForLevel(level)[4]);
+    }
+    private void SummonUnit(Vector2Int position, int type)
+    {
+        switch (type)
+        {
+            case 0: // Foot soldier
+                _teamsController.CloneFootSoldier(position.x, position.y, 1);
+                break;
+            case 1: // Cavalier
+                _teamsController.CloneFootSoldier(position.x, position.y, 1);
+                break;
+            case 2: // Rogue
+                _teamsController.CloneFootSoldier(position.x, position.y, 1);
+                break;
+            case 3: // Archer
+                _teamsController.CloneFootSoldier(position.x, position.y, 1);
+                break;
+            case 4: // Mage
+                _teamsController.CloneFootSoldier(position.x, position.y, 1);
+                break;
+            default:
+                _teamsController.CloneFootSoldier(position.x, position.y, 1);
+                break;
+        }
     }
 }

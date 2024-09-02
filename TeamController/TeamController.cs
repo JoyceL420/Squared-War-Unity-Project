@@ -32,6 +32,11 @@ public class TeamController : MonoBehaviour
     private GameObject TurnCaller;
     private GameObject OverlapChecker;
     private OverlapChecker _overlapChecker;
+    private FootSoldierDragPlacer _footSoldierPlacer;
+    private CavalierDragPlacer _cavalierPlacer;
+    private RogueDragPlacer _roguePlacer;
+    private ArcherDragPlacer _archerPlacer;
+    private MageDragPlacer _magePlacer;
     private int _moveThreshold;
     private TurnCaller _turnCaller;   
     private Vector2Int _mapSize;
@@ -39,6 +44,7 @@ public class TeamController : MonoBehaviour
     void Awake()
     {
         obstructedSquares = new List <Vector2Int>();
+        _unitPrefab = GameObject.Find("UnitPrefab");
     }
     // Start is called before the first frame update
     void Start()
@@ -46,7 +52,6 @@ public class TeamController : MonoBehaviour
         _unitId = 1;
         affectedSquares = new List<(Vector2Int coordinate, int id, int team)>();
         occupiedSquares = new List<Vector2Int>();
-        _unitPrefab = GameObject.Find("UnitPrefab");
         TurnCaller = GameObject.Find("Main Camera/Game Manager");
         _turnCaller = TurnCaller.GetComponent<TurnCaller>();
         OverlapChecker = GameObject.Find("OverlapAfterMoveChecker");
@@ -54,12 +59,22 @@ public class TeamController : MonoBehaviour
         _moveThreshold = 0;
         _blueUnitIsAlive = true;
         _redUnitIsAlive = true;
-
+        GameObject FootSoldierPlacer = GameObject.Find("FootSoldierPlacer");
+        GameObject CavalierPlacer = GameObject.Find("CavalierPlacer");
+        GameObject RoguePlacer = GameObject.Find("RoguePlacer");
+        GameObject ArcherPlacer = GameObject.Find("ArcherPlacer");
+        GameObject MagePlacer = GameObject.Find("MagePlacer");
+        _footSoldierPlacer = FootSoldierPlacer.GetComponent<FootSoldierDragPlacer>();
+        _cavalierPlacer = CavalierPlacer.GetComponent<CavalierDragPlacer>();
+        _roguePlacer = RoguePlacer.GetComponent<RogueDragPlacer>();
+        _archerPlacer = ArcherPlacer.GetComponent<ArcherDragPlacer>();
+        _magePlacer = MagePlacer.GetComponent<MageDragPlacer>();
     }
 
-    public void LevelLoadInitialize((int x, int y) MapSize)
+    public void LevelLoadInitialize((int x, int y) MapSize, List<Vector2Int> obstacles)
     {
         _mapSize = new Vector2Int(MapSize.x, MapSize.y);
+        obstructedSquares = obstacles;
     }
     public void Turn(int team)
     {
@@ -294,6 +309,7 @@ public class TeamController : MonoBehaviour
             case "Foot":
                 // Foot soldiers
                 _blueFootSoldiers.Remove(unitToRemove);
+                _footSoldierPlacer._amountPlaced -= 1;
                 _unitId = 0;
                 foreach (GameObject clone in _blueFootSoldiers)
                 {
@@ -305,6 +321,7 @@ public class TeamController : MonoBehaviour
             case "Cavalier":
                 // Cavaliers
                 _blueCavaliers.Remove(unitToRemove);
+                _cavalierPlacer._amountPlaced -= 1;
                 _unitId = 0;
                 foreach (GameObject clone in _blueCavaliers)
                 {
@@ -316,6 +333,7 @@ public class TeamController : MonoBehaviour
             case "Rogue":
                 // Cavaliers
                 _blueRogues.Remove(unitToRemove);
+                _roguePlacer._amountPlaced -= 1;
                 _unitId = 0;
                 foreach (GameObject clone in _blueCavaliers)
                 {
@@ -327,6 +345,7 @@ public class TeamController : MonoBehaviour
             case "Archer":
                 // Cavaliers
                 _blueArchers.Remove(unitToRemove);
+                _archerPlacer._amountPlaced -= 1;
                 _unitId = 0;
                 foreach (GameObject clone in _blueCavaliers)
                 {
@@ -338,6 +357,7 @@ public class TeamController : MonoBehaviour
             case "Mage":
                 // Cavaliers
                 _blueMages.Remove(unitToRemove);
+                _magePlacer._amountPlaced -= 1;
                 _unitId = 0;
                 foreach (GameObject clone in _blueCavaliers)
                 {

@@ -15,6 +15,8 @@ public class FootSoldierDragPlacer : MonoBehaviour
     private TeamController _teamsController;
     private (int mapWidth, int mapHeight) _mapSize;
     public List<(float x, float y)> occupiedSquares;
+    public int _amountPlaced = 0;
+    private int _placeLimit;
     private int _team; // Testing variable remove when unneeded
     // Start is called before the first frame update
     void Start()
@@ -26,9 +28,14 @@ public class FootSoldierDragPlacer : MonoBehaviour
         _cameraPosition = GameObject.Find("Main Camera/Game Manager");
         occupiedSquares = new List<(float x, float y)>();
     }
-    public void LevelLoadInitialize ((int, int) MapSize)
+    public void LevelLoadInitialize ((int, int) MapSize, int UnitLimit)
     {
         _mapSize = MapSize;
+        _placeLimit = UnitLimit;
+    }
+    public void LevelUnload()
+    {
+        // Make inactive
     }
     void Update()
     {
@@ -94,7 +101,13 @@ public class FootSoldierDragPlacer : MonoBehaviour
             Debug.Log("Spawn has been prevented case 3");
             return false;
         }
+        if (_amountPlaced == _placeLimit)
+        {
+            Debug.Log("Spawn has been prevented case 4");
+            return false;
+        }
         // Otherwise it will be allowed
+        _amountPlaced += 1;
         return true;
     }
     void SummonUnit(float xSpawnPoint, float ySpawnPoint)

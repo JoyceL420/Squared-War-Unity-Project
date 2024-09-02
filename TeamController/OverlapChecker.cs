@@ -11,7 +11,7 @@ public class OverlapChecker : MonoBehaviour
         foreach (var attackedTile in affectedSquares)
         { // If the unit isnt dead, and wasn't the one that attacked the affected tile it shares a position with
             if ((unit.isDead is false && attackedTile.coordinate.x == unit.UnitPosition.x && attackedTile.coordinate.y == unit.UnitPosition.y && attackedTile.id > unit.GetId()) || 
-                (attackedTile.team != unit.GetTeam() && attackedTile.id == unit.GetId() && attackedTile.coordinate.y == unit.UnitPosition.y && attackedTile.coordinate.x == unit.UnitPosition.x))
+                (attackedTile.team != unit.GetTeam() && attackedTile.coordinate.y == unit.UnitPosition.y && attackedTile.coordinate.x == unit.UnitPosition.x))
             { 
                 // IF the following conditions are met
                 // X and Y of the unit and attacked tile are the same
