@@ -21,6 +21,11 @@ public class OverlapChecker : MonoBehaviour
                 // The same conditions +
                 // Unit being checked is in a different team to the team that attacked
                 unit.Kill(); // Kill unit
+
+                // And set it to the relevant tile that a unit was eliminated on top of it 
+                GameObject tilesManager = GameObject.Find("Main Camera/Game Manager");
+                TilesManager _tilesManagerReference = tilesManager.GetComponent<TilesManager>();
+                _tilesManagerReference.SetTileToEliminated(attackedTile.coordinate.x, attackedTile.coordinate.y);
             }
         }
     }

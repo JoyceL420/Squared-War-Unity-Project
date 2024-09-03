@@ -37,6 +37,7 @@ public class TeamController : MonoBehaviour
     private RogueDragPlacer _roguePlacer;
     private ArcherDragPlacer _archerPlacer;
     private MageDragPlacer _magePlacer;
+    private TilesManager _tilesManager;
     private int _moveThreshold;
     private TurnCaller _turnCaller;   
     private Vector2Int _mapSize;
@@ -69,6 +70,8 @@ public class TeamController : MonoBehaviour
         _roguePlacer = RoguePlacer.GetComponent<RogueDragPlacer>();
         _archerPlacer = ArcherPlacer.GetComponent<ArcherDragPlacer>();
         _magePlacer = MagePlacer.GetComponent<MageDragPlacer>();
+        GameObject tilesManager = GameObject.Find("Main Camera/Game Manager");
+        _tilesManager = tilesManager.GetComponent<TilesManager>();
     }
 
     public void LevelLoadInitialize((int x, int y) MapSize, List<Vector2Int> obstacles)
@@ -84,6 +87,7 @@ public class TeamController : MonoBehaviour
 
     private IEnumerator TurnCoroutine(int team)
     { // Set necessary variables and lists
+        _tilesManager.ResetTiles();
         TurnPrep(team);
         for (int _timesMoved = 0; _timesMoved < _moveThreshold; _timesMoved++)
         {
@@ -151,6 +155,10 @@ public class TeamController : MonoBehaviour
 
     private void CheckAllOverlaps()
     {
+        foreach (var position in affectedSquares)
+        {
+            _tilesManager.SetTileToAttacked(position.coordinate.x, position.coordinate.y);
+        }
         foreach (GameObject clone in _clones)
         {
             unit unit = clone.GetComponent<unit>();
@@ -216,7 +224,7 @@ public class TeamController : MonoBehaviour
             unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Cavalier", _mapSize, 3);
         }
     }
-    public void CloneRogue(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
+    public void CloneRogue(float xSpawnPoint, float ySpawnPoint, int team) // Rogue clone
     { // Clone and initialization of the rogue as called by the player or LevelBuilder
         GameObject clone = Instantiate(_unitPrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
         unit unit = clone.GetComponent<unit>();
@@ -237,7 +245,7 @@ public class TeamController : MonoBehaviour
             unit.Initialize(2, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Rogue", _mapSize, 5);
         }
     }
-    public void CloneArcher(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
+    public void CloneArcher(float xSpawnPoint, float ySpawnPoint, int team) // Archer clone
     { // Clone and initialization of the archer as called by the player or LevelBuilder
         GameObject clone = Instantiate(_unitPrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
         unit unit = clone.GetComponent<unit>();
@@ -258,7 +266,7 @@ public class TeamController : MonoBehaviour
             unit.Initialize(1, _unitId, team, (xSpawnPoint, ySpawnPoint), obstructedSquares, "Archer", _mapSize, 7);
         }
     }
-    public void CloneMage(float xSpawnPoint, float ySpawnPoint, int team) // Cavalier clone
+    public void CloneMage(float xSpawnPoint, float ySpawnPoint, int team) // Mage clone
     { // Clone and initialization of the mage as called by the player or LevelBuilder
         GameObject clone = Instantiate(_unitPrefab, new Vector2(xSpawnPoint, ySpawnPoint), Quaternion.identity);
         unit unit = clone.GetComponent<unit>();
@@ -298,6 +306,7 @@ public class TeamController : MonoBehaviour
     }
     private void Nuke()
     {
+
         // Empties every single list and removes all units
         // (Will be used when changing level)
     }
