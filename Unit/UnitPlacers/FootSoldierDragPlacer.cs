@@ -17,6 +17,7 @@ public class FootSoldierDragPlacer : MonoBehaviour
     public List<(float x, float y)> occupiedSquares;
     public int _amountPlaced = 0;
     private int _placeLimit;
+    
     private int _team; // Testing variable remove when unneeded
     // Start is called before the first frame update
     void Start()
@@ -27,15 +28,18 @@ public class FootSoldierDragPlacer : MonoBehaviour
         _teamsController = TeamsController.GetComponent<TeamController>();
         _cameraPosition = GameObject.Find("Main Camera/Game Manager");
         occupiedSquares = new List<(float x, float y)>();
+        
     }
     public void LevelLoadInitialize ((int, int) MapSize, int UnitLimit)
     {
+        gameObject.SetActive(true);
         _mapSize = MapSize;
         _placeLimit = UnitLimit;
+        _amountPlaced = 0;
     }
     public void LevelUnload()
     {
-        // Make inactive
+        gameObject.SetActive(false);
     }
     void Update()
     {

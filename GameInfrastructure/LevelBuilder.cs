@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class LevelBuilder : MonoBehaviour
 {
     private TeamController _teamsController; 
+    private bool _levelActive;
     private TilesManager _tilesManager;
     private CameraMovement _cameraMover;
     private FootSoldierDragPlacer _footsoldierPlacer;
@@ -19,10 +20,13 @@ public class LevelBuilder : MonoBehaviour
     private GameObject _obstaclePrefab;
     private List <Vector2Int> _obstructedSquares;
     private List <GameObject> _obstaclesList;
+    private UnitsCounter _unitsCounter;
+    private List<int> _unitLimits;
     void Start()
     {
         _obstaclesList = new List<GameObject>(); 
         _obstructedSquares = new List<Vector2Int>();
+        _levelActive = false;
         // This Script gets the data from LevelSpecifications based on what level was chosen
         // And places the units and battle elements and tells them their starting positions
         
@@ -44,6 +48,8 @@ public class LevelBuilder : MonoBehaviour
         _magePlacer = UnitPlacer.GetComponent<MageDragPlacer>();
         _obstaclePrefab = GameObject.Find("ObstaclePrefab");
         _levelData = GetComponent<LevelData>();
+        GameObject unitsCounter = GameObject.Find("UnitsCounter");
+        _unitsCounter = unitsCounter.GetComponent<UnitsCounter>();
 
         // DEBUG LEVEL
         LoadLevel(0);
@@ -53,8 +59,18 @@ public class LevelBuilder : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape)) // DEBUG
         {
+            _levelActive = false;
             DeactivateLevel();
         }
+        if (_levelActive)
+        {
+            UpdateUnitsCounter();
+        }
+    }
+
+    private void UpdateUnitsCounter()
+    {
+        _unitsCounter.UpdateText($"{_footsoldierPlacer._amountPlaced} of {_unitLimits[0]} allowed foot soldiers spawned\n{_cavalierPlacer._amountPlaced} of {_unitLimits[1]} allowed cavaliers spawned\n{_roguePlacer._amountPlaced} of {_unitLimits[2]} allowed rogues spawned\n{_archerPlacer._amountPlaced} of {_unitLimits[3]} allowed archers spawned\n{_magePlacer._amountPlaced} of {_unitLimits[4]} allowed mages spawned");
     }
 
     void PlaceObstructions()
@@ -96,6 +112,7 @@ public class LevelBuilder : MonoBehaviour
 
     private void DeactivateLevel()
     {
+        _teamsController.Nuke();
         _obstructedSquares.Clear();
         _tilesManager.RemoveTiles();
         // This method simply removes all tiles that have been created
@@ -111,12 +128,14 @@ public class LevelBuilder : MonoBehaviour
         _roguePlacer.LevelUnload();
         _archerPlacer.LevelUnload();
         _magePlacer.LevelUnload();
+        _unitsCounter.ResetText();
     }
     private void LoadLevel(int level)
     {
         switch(level)
         {
             case 0:
+                _levelActive = true;
                 _mapWidth = 16;
                 _mapHeight = 9;
                 foreach (Vector2Int obstacle in _levelData.GetObstaclesForLevel(level))
@@ -140,6 +159,7 @@ public class LevelBuilder : MonoBehaviour
     private void InitializeControllers(int level)
     {
         _teamsController.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetObstaclesForLevel(level));
+        _unitLimits = _levelData.GetUnitLimitsForLevel(level);
         _footsoldierPlacer.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetUnitLimitsForLevel(level)[0]);
         _cavalierPlacer.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetUnitLimitsForLevel(level)[1]);
         _roguePlacer.LevelLoadInitialize((_mapWidth, _mapHeight), _levelData.GetUnitLimitsForLevel(level)[2]);

@@ -12,6 +12,7 @@ public class TurnCaller : MonoBehaviour
     private bool _turnOngoing;
     private bool _turnLoopReiterate;
     private bool _allowReload;
+    private TilesManager _tilesManager;
     // Going to redo the systems so that checks can be done to determine IF no more moves can be made 
     // OR all the units on one team are gone.
     public void FinishTurn()
@@ -28,6 +29,8 @@ public class TurnCaller : MonoBehaviour
         _allowReload = true;
         TeamController = GameObject.Find("TeamsController");
         _teamController = TeamController.GetComponent<TeamController>();
+        GameObject tilesManager = GameObject.Find("Main Camera/Game Manager");
+        _tilesManager = tilesManager.GetComponent<TilesManager>();
         // This is the script that will call the passing of a turn to tell all units on the
         // Blue/red side that they will need to move
 
@@ -74,7 +77,8 @@ public class TurnCaller : MonoBehaviour
         while (_turnLoopReiterate)
         {
             // Reset flag
-            _turnLoopReiterate = false; // Forces an infinite loop set to false when done with debugging
+            _turnLoopReiterate = false;
+            _tilesManager.ResetTiles();
             // Check turn and run methods for that turn
             switch (_currentTurn)
             {
@@ -95,9 +99,9 @@ public class TurnCaller : MonoBehaviour
             
             // Determine if reiteration should happen
             _turnLoopReiterate = _teamController.CheckLoopStatus(_cachedReset);
-            _turnLoopReiterate = true; // Forces an infinite loop set to false when done with debugging
         }
         // Debug.Log("Loop ended");
+        _tilesManager.ResetTiles();
         Reset();
     }
 }

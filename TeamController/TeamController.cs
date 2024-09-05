@@ -304,8 +304,25 @@ public class TeamController : MonoBehaviour
             }
         }
     }
-    private void Nuke()
+    public void Nuke()
     {
+        foreach (GameObject unit in _clones)
+        {
+            Destroy(unit);
+        }
+        _clones.Clear();
+        _redClones.Clear();
+        _blueClones.Clear();
+        _blueFootSoldiers.Clear();
+        _blueCavaliers.Clear();
+        _blueRogues.Clear();
+        _blueArchers.Clear();
+        _blueMages.Clear();
+        _redFootSoldiers.Clear();
+        _redCavaliers.Clear();
+        _redRogues.Clear();
+        _redArchers.Clear();
+        _redMages.Clear();
 
         // Empties every single list and removes all units
         // (Will be used when changing level)

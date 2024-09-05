@@ -28,12 +28,14 @@ public class ArcherDragPlacer : MonoBehaviour
     }
     public void LevelLoadInitialize ((int, int) MapSize, int UnitLimit)
     {
+        gameObject.SetActive(true);
         _mapSize = MapSize;
         _placeLimit = UnitLimit;
+        _amountPlaced = 0;
     }
     public void LevelUnload()
     {
-        // Make inactive
+        gameObject.SetActive(false);
     }
     void Update()
     {
