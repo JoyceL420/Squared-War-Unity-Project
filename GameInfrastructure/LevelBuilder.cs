@@ -21,12 +21,15 @@ public class LevelBuilder : MonoBehaviour
     private List <Vector2Int> _obstructedSquares;
     private List <GameObject> _obstaclesList;
     private UnitsCounter _unitsCounter;
+    private LevelSelectionText _levelSelectionText;
     private List<int> _unitLimits;
-    void Start()
+    private List<GameObject> _levelButtons;
+    void Awake()
     {
         _obstaclesList = new List<GameObject>(); 
         _obstructedSquares = new List<Vector2Int>();
         _levelActive = false;
+        _levelButtons = new List<GameObject>();
         // This Script gets the data from LevelSpecifications based on what level was chosen
         // And places the units and battle elements and tells them their starting positions
         
@@ -50,9 +53,19 @@ public class LevelBuilder : MonoBehaviour
         _levelData = GetComponent<LevelData>();
         GameObject unitsCounter = GameObject.Find("UnitsCounter");
         _unitsCounter = unitsCounter.GetComponent<UnitsCounter>();
+        GameObject levelSelectionText = GameObject.Find("LevelSelectionText");
+        _levelSelectionText = levelSelectionText.GetComponent<LevelSelectionText>(); 
 
-        // DEBUG LEVEL
-        LoadLevel(0);
+
+        // 
+        int index = 0;
+        while (index < 10)
+        {
+            index += 1;
+            Debug.Log($"Index = {index}");
+            GameObject levelButtonReference = GameObject.Find($"Level{index}");
+            _levelButtons.Add(levelButtonReference);
+        }
     }
 
     private void Update()   
@@ -71,6 +84,28 @@ public class LevelBuilder : MonoBehaviour
     private void UpdateUnitsCounter()
     {
         _unitsCounter.UpdateText($"{_footsoldierPlacer._amountPlaced} of {_unitLimits[0]} allowed foot soldiers spawned\n{_cavalierPlacer._amountPlaced} of {_unitLimits[1]} allowed cavaliers spawned\n{_roguePlacer._amountPlaced} of {_unitLimits[2]} allowed rogues spawned\n{_archerPlacer._amountPlaced} of {_unitLimits[3]} allowed archers spawned\n{_magePlacer._amountPlaced} of {_unitLimits[4]} allowed mages spawned");
+    }
+    private void HideLevelButtons()
+    {
+        foreach (GameObject levelButton in _levelButtons)
+        {
+            levelButton.gameObject.SetActive(false);
+        }
+    }
+    private void ShowLevelButtons()
+    {
+        foreach (GameObject levelButton in _levelButtons)
+        {
+            levelButton.gameObject.SetActive(true);
+        }
+    }
+    private void HideLevelSelectionText()
+    {
+        _levelSelectionText.ResetText();
+    }
+    private void ShowLevelSelectionText()
+    {
+        _levelSelectionText.UpdateText("		Select Level\n\n	           1      2      3      4      5\n\n\n                     6      7      8      9     10");
     }
 
     void PlaceObstructions()
@@ -112,6 +147,8 @@ public class LevelBuilder : MonoBehaviour
 
     private void DeactivateLevel()
     {
+        ShowLevelButtons();
+        ShowLevelSelectionText();
         _teamsController.Nuke();
         _obstructedSquares.Clear();
         _tilesManager.RemoveTiles();
@@ -130,8 +167,10 @@ public class LevelBuilder : MonoBehaviour
         _magePlacer.LevelUnload();
         _unitsCounter.ResetText();
     }
-    private void LoadLevel(int level)
+    public void LoadLevel(int level)
     {
+        HideLevelButtons();
+        HideLevelSelectionText();
         switch(level)
         {
             case 0:

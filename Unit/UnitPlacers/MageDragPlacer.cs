@@ -19,6 +19,7 @@ public class MageDragPlacer : MonoBehaviour
     private int _placeLimit;
     void Start()
     {
+        gameObject.SetActive(false);
         _team = 0;
         dragging = false;
         GameObject TeamsController = GameObject.Find("TeamsController");

@@ -19,6 +19,7 @@ public class CavalierDragPlacer : MonoBehaviour
     private int _team; 
     void Start()
     {
+        gameObject.SetActive(false);
         _team = 0;
         dragging = false;
         GameObject TeamsController = GameObject.Find("TeamsController");

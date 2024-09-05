@@ -22,6 +22,7 @@ public class FootSoldierDragPlacer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameObject.SetActive(false);
         _team = 0;
         dragging = false;
         GameObject TeamsController = GameObject.Find("TeamsController");

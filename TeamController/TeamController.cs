@@ -46,6 +46,18 @@ public class TeamController : MonoBehaviour
     {
         obstructedSquares = new List <Vector2Int>();
         _unitPrefab = GameObject.Find("UnitPrefab");
+        GameObject FootSoldierPlacer = GameObject.Find("FootSoldierPlacer");
+        GameObject CavalierPlacer = GameObject.Find("CavalierPlacer");
+        GameObject RoguePlacer = GameObject.Find("RoguePlacer");
+        GameObject ArcherPlacer = GameObject.Find("ArcherPlacer");
+        GameObject MagePlacer = GameObject.Find("MagePlacer");
+        _footSoldierPlacer = FootSoldierPlacer.GetComponent<FootSoldierDragPlacer>();
+        _cavalierPlacer = CavalierPlacer.GetComponent<CavalierDragPlacer>();
+        _roguePlacer = RoguePlacer.GetComponent<RogueDragPlacer>();
+        _archerPlacer = ArcherPlacer.GetComponent<ArcherDragPlacer>();
+        _magePlacer = MagePlacer.GetComponent<MageDragPlacer>();
+        GameObject tilesManager = GameObject.Find("Main Camera/Game Manager");
+        _tilesManager = tilesManager.GetComponent<TilesManager>();
     }
     // Start is called before the first frame update
     void Start()
@@ -60,18 +72,6 @@ public class TeamController : MonoBehaviour
         _moveThreshold = 0;
         _blueUnitIsAlive = true;
         _redUnitIsAlive = true;
-        GameObject FootSoldierPlacer = GameObject.Find("FootSoldierPlacer");
-        GameObject CavalierPlacer = GameObject.Find("CavalierPlacer");
-        GameObject RoguePlacer = GameObject.Find("RoguePlacer");
-        GameObject ArcherPlacer = GameObject.Find("ArcherPlacer");
-        GameObject MagePlacer = GameObject.Find("MagePlacer");
-        _footSoldierPlacer = FootSoldierPlacer.GetComponent<FootSoldierDragPlacer>();
-        _cavalierPlacer = CavalierPlacer.GetComponent<CavalierDragPlacer>();
-        _roguePlacer = RoguePlacer.GetComponent<RogueDragPlacer>();
-        _archerPlacer = ArcherPlacer.GetComponent<ArcherDragPlacer>();
-        _magePlacer = MagePlacer.GetComponent<MageDragPlacer>();
-        GameObject tilesManager = GameObject.Find("Main Camera/Game Manager");
-        _tilesManager = tilesManager.GetComponent<TilesManager>();
     }
 
     public void LevelLoadInitialize((int x, int y) MapSize, List<Vector2Int> obstacles)
@@ -305,7 +305,8 @@ public class TeamController : MonoBehaviour
         }
     }
     public void Nuke()
-    {
+    { // Clears all lists... I hope...
+        Debug.Log("Nuke called");
         foreach (GameObject unit in _clones)
         {
             Destroy(unit);
@@ -323,6 +324,7 @@ public class TeamController : MonoBehaviour
         _redRogues.Clear();
         _redArchers.Clear();
         _redMages.Clear();
+        occupiedSquares.Clear();
 
         // Empties every single list and removes all units
         // (Will be used when changing level)
