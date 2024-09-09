@@ -39,11 +39,13 @@ public class TeamController : MonoBehaviour
     private MageDragPlacer _magePlacer;
     private TilesManager _tilesManager;
     private int _moveThreshold;
+    public bool _nukeCalled;
     private TurnCaller _turnCaller;   
     private Vector2Int _mapSize;
     // Awake runs before Start
     void Awake()
     {
+        _nukeCalled = false;
         obstructedSquares = new List <Vector2Int>();
         _unitPrefab = GameObject.Find("UnitPrefab");
         GameObject FootSoldierPlacer = GameObject.Find("FootSoldierPlacer");
@@ -58,10 +60,6 @@ public class TeamController : MonoBehaviour
         _magePlacer = MagePlacer.GetComponent<MageDragPlacer>();
         GameObject tilesManager = GameObject.Find("Main Camera/Game Manager");
         _tilesManager = tilesManager.GetComponent<TilesManager>();
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
         _unitId = 1;
         affectedSquares = new List<(Vector2Int coordinate, int id, int team)>();
         occupiedSquares = new List<Vector2Int>();
@@ -88,6 +86,7 @@ public class TeamController : MonoBehaviour
     private IEnumerator TurnCoroutine(int team)
     { // Set necessary variables and lists
         _tilesManager.ResetTiles();
+        _unitsToMove.Clear();
         TurnPrep(team);
         for (int _timesMoved = 0; _timesMoved < _moveThreshold; _timesMoved++)
         {
@@ -296,6 +295,7 @@ public class TeamController : MonoBehaviour
             // If the unit selectedto remove has the same id as the specified id AND the battle isnt ongoing.
             if (unit.GetId() == unitId && _turnCaller.PreparationStatus())
             { // Remove that unit from the game
+                Debug.Log(unit.GetId());
                 occupiedSquares.Remove(new Vector2Int (unit.UnitPosition.x, unit.UnitPosition.y));
                 _blueClones.Remove(clone);
                 _clones.Remove(clone);
@@ -305,7 +305,7 @@ public class TeamController : MonoBehaviour
         }
     }
     public void Nuke()
-    { // Clears all lists... I hope...
+    { // Clears all lists (used when level is unloaded)
         Debug.Log("Nuke called");
         foreach (GameObject unit in _clones)
         {
@@ -325,9 +325,7 @@ public class TeamController : MonoBehaviour
         _redArchers.Clear();
         _redMages.Clear();
         occupiedSquares.Clear();
-
-        // Empties every single list and removes all units
-        // (Will be used when changing level)
+        _nukeCalled = true;
     }
     private void ResetIds(string _unitType, GameObject unitToRemove)
     { // Only needs to be used EVER for the blue team :P
@@ -400,6 +398,7 @@ public class TeamController : MonoBehaviour
     }
     public bool CheckLoopStatus(bool _shouldReset)
     {
+        _nukeCalled = false;
         if (_shouldReset)
         { // If a reset has been called/cached
             return false; // End turn loop
@@ -428,6 +427,10 @@ public class TeamController : MonoBehaviour
             { // IF a red unit is alive, and capable of moving
                 _redUnitIsAlive = true; // Set flag to continue loop
             }
+        }
+        if (_nukeCalled)
+        { // If a level was unloaded mid-loop
+            return false;
         }
         if (_blueUnitIsAlive == false || _redUnitIsAlive == false)
         { // If either team has no usable units

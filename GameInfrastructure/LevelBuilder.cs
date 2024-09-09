@@ -62,7 +62,7 @@ public class LevelBuilder : MonoBehaviour
         while (index < 10)
         {
             index += 1;
-            Debug.Log($"Index = {index}");
+            // Debug.Log($"Index = {index}");
             GameObject levelButtonReference = GameObject.Find($"Level{index}");
             _levelButtons.Add(levelButtonReference);
         }

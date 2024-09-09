@@ -171,39 +171,42 @@ public class unit : MonoBehaviour
     }
     void Move() 
     {
-        _timesMovedInTurn += 1; // Attempt to move being called
-        switch (_unitType)
-        { // Determines how a unit will move and attack
-            case "Foot": // Complete
-                _footMovement.Move(GetDirection());
-                UpdatePosition();
-                _attack.FootSoldierAttack(UnitPosition);
-                break;
-            case "Cavalier": // Complete
-                _footMovement.Move(GetDirection());
-                UpdatePosition();
-                _attack.FootSoldierAttack(UnitPosition);
-                break;
-            case "Rogue": // Needs testing
-                _footMovement.Move(GetDirection());
-                UpdatePosition();
-                _attack.FootSoldierAttack(UnitPosition);
-                break; 
-            case "Archer": // Needs testing
-                _footMovement.Move(GetDirection());
-                UpdatePosition();
-                _attack.ArcherAttack(UnitPosition, _lastMovedDirection);
-                break;
-            case "Mage": // Needs testing
-                _footMovement.Move(GetDirection());
-                UpdatePosition();
-                _attack.MageAttack(UnitPosition, _lastMovedDirection);
-                break;
-            default:
-                Debug.LogError("ERROR: _movementType variable OUTSIDE ACCEPTED RANGE");
-                break;  
+        if (_timesMovedInTurn < _speed)
+        {
+            _timesMovedInTurn += 1; // Attempt to move being called
+            switch (_unitType)
+            { // Determines how a unit will move and attack
+                case "Foot": // Complete
+                    _footMovement.Move(GetDirection());
+                    UpdatePosition();
+                    _attack.FootSoldierAttack(UnitPosition);
+                    break;
+                case "Cavalier": // Complete
+                    _footMovement.Move(GetDirection());
+                    UpdatePosition();
+                    _attack.FootSoldierAttack(UnitPosition);
+                    break;
+                case "Rogue": // Needs testing
+                    _footMovement.Move(GetDirection());
+                    UpdatePosition();
+                    _attack.FootSoldierAttack(UnitPosition);
+                    break; 
+                case "Archer": // Needs testing
+                    _footMovement.Move(GetDirection());
+                    UpdatePosition();
+                    _attack.ArcherAttack(UnitPosition, _lastMovedDirection);
+                    break;
+                case "Mage": // Needs testing
+                    _footMovement.Move(GetDirection());
+                    UpdatePosition();
+                    _attack.MageAttack(UnitPosition, _lastMovedDirection);
+                    break;
+                default:
+                    Debug.LogError("ERROR: _movementType variable OUTSIDE ACCEPTED RANGE");
+                    break;  
+            }
+            UpdatePosition(); // Redundant
         }
-        UpdatePosition(); // Redundant
     }
     public void MoveTile(int direction)
     {

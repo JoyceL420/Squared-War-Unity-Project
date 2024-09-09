@@ -99,8 +99,12 @@ public class TurnCaller : MonoBehaviour
             
             // Determine if reiteration should happen
             _turnLoopReiterate = _teamController.CheckLoopStatus(_cachedReset);
+            if (_teamController._nukeCalled)
+            {
+                _turnLoopReiterate = false;
+            }
         }
-        // Debug.Log("Loop ended");
+        Debug.Log("Loop ended");
         _tilesManager.ResetTiles();
         Reset();
     }
